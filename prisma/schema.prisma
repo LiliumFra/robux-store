@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                  String    @id @default(uuid())
+  email               String    @unique
+  password            String
+  roblox_username     String?
+  email_verified      Boolean   @default(false)
+  reset_token         String?
+  reset_token_expires DateTime?
+  created_at          DateTime  @default(now())
+  updated_at          DateTime  @updatedAt
+  orders              Order[]
+
+  @@map("users")
+}
+
+model Order {
+  id                String        @id @default(uuid())
+  order_number      String        @unique // e.g., ORD-12345
+  user_id           String
+  user              User          @relation(fields: [user_id], references: [id])
+  roblox_username   String
+  robux_amount      Int
+  robux_with_tax    Int
+  usd_price         Float
+  crypto_currency   String        // e.g., BTC, ETH
+  crypto_amount     String?       // Exact amount to send
+  payment_id        String?       // NowPayments ID
+  rbxcrate_order_id String?       // RBXCrate ID
+  status            OrderStatus   @default(PENDING)
+  payment_status    PaymentStatus @default(WAITING)
+  transaction_hash  String?
+  completed_at      DateTime?
+  created_at        DateTime      @default(now())
+  updated_at        DateTime      @updatedAt
+
+  @@map("orders")
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  WAITING
+  CONFIRMING
+  CONFIRMED
+  FAILED
+}

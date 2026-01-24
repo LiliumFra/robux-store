@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Robux Store - Next.js Application
 
-## Getting Started
+Modern web application for selling Robux with crypto payments. Built with Next.js 14, Tailwind, Shadcn/UI, Prisma (PostgreSQL), and server-side authentication.
 
-First, run the development server:
+## Features
+- **Authentication**: Custom JWT-based auth (Login/Register).
+- **Dashboard**: User profile, order stats, and history.
+- **Purchase Flow**: Real-time calculator, crypto selection, and payment handling.
+- **Integrations**: Ready for RBXcrate (delivery) and NowPayments (crypto).
+- **Responsive**: Mobile-first design.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Tech Stack
+- **Framework**: Next.js 14 (App Router)
+- **Database**: PostgreSQL (Neon via Prisma)
+- **UI**: TailwindCSS + Shadcn/UI
+- **State**: Zustand (Client auth)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. **Environment Variables**:
+   Update `.env` with your keys (Database URL is already set).
 
-## Learn More
+3. **Database**:
+   ```bash
+   npx prisma migrate dev
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+4. **Run Development Server**:
+   ```bash
+   npm run dev
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deployment
+1. Push to GitHub.
+2. Import project in Vercel.
+3. Add environment variables in Vercel dashboard.
+4. Deploy.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Project Structure
+- `/app`: Pages and API routes.
+- `/components`: UI components (Shadcn) and Custom components.
+- `/lib`: Utilities (Auth, Database, Validators).
+- `/prisma`: Database schema.
