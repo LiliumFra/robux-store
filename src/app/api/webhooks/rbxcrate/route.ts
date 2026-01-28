@@ -6,6 +6,9 @@ import crypto from 'crypto';
 // Documentation: https://rbxcrate-organization.gitbook.io/rbxcrate-api-docs/webhooks/webhook
 // ============================================================================
 
+// RBXCrate sends webhooks from this IP (per documentation)
+const RBXCRATE_WEBHOOK_IP = '141.98.171.203';
+
 // Types based on RBXCrate API documentation
 type OrderType = 'gamepass_order' | 'vip_server';
 type OrderStatus = 'Completed' | 'Pending' | 'Queued' | 'Queued_Deferred' | 'Error' | 'Cancelled';
@@ -49,8 +52,31 @@ function verifySignature(payload: Omit<RBXCrateWebhookPayload, 'sign'>, received
   return expectedSign === receivedSign;
 }
 
+// Verify IP address (recommended security check per RBXCrate docs)
+function verifySourceIP(request: Request): boolean {
+  // In production, Vercel forwards the real IP in x-forwarded-for
+  const forwardedFor = request.headers.get('x-forwarded-for');
+  const realIp = request.headers.get('x-real-ip');
+  const sourceIp = forwardedFor?.split(',')[0]?.trim() || realIp || 'unknown';
+  
+  // Allow in development or if IP matches RBXCrate
+  if (process.env.NODE_ENV === 'development') return true;
+  
+  const isValidIp = sourceIp === RBXCRATE_WEBHOOK_IP;
+  if (!isValidIp) {
+    console.warn('[RBXCrate Webhook] Request from unexpected IP:', sourceIp);
+  }
+  return isValidIp;
+}
+
 export async function POST(request: Request) {
   try {
+    // Security: Verify source IP (recommended by RBXCrate docs)
+    if (!verifySourceIP(request)) {
+      console.error('[RBXCrate Webhook] Blocked request from unauthorized IP');
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    }
+
     // Parse the request body
     const body = await request.json();
     
