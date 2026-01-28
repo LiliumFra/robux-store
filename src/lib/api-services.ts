@@ -1,14 +1,14 @@
 // RBXCrate API Integration
 const RBXCRATE_API_KEY = process.env.RBXCRATE_API_KEY;
 const NOWPAYMENTS_API_KEY = process.env.NOWPAYMENTS_API_KEY;
-const PLACE_ID = process.env.PLACE_ID || '123456789'; // Required: Your Roblox game Place ID
 const DOMAIN = process.env.NEXT_PUBLIC_APP_URL || 'https://robux-store.vercel.app';
 
 // ============================================================================
 // RBXCrate - Create Robux Order
 // Documentation: https://rbxcrate-organization.gitbook.io/rbxcrate-api-docs
+// placeId is provided by buyer (they create their own gamepass)
 // ============================================================================
-export async function createRobuxOrder(robuxAmount: number, robloxUsername: string, orderId: string) {
+export async function createRobuxOrder(robuxAmount: number, robloxUsername: string, placeId: number, orderId: string) {
   if (!RBXCRATE_API_KEY || RBXCRATE_API_KEY.includes('placeholder')) {
     console.log('[RBXCrate] Mock mode - API key not configured');
     return { success: true, id: `mock_order_${Date.now()}` };
@@ -27,11 +27,12 @@ export async function createRobuxOrder(robuxAmount: number, robloxUsername: stri
         orderId: orderId,
         robloxUsername: robloxUsername,
         robuxAmount: robuxAmount,
-        placeId: parseInt(PLACE_ID),
+        placeId: placeId,  // Now comes from buyer input
         isPreOrder: true,        // Recommended: Order will wait if no Robux available
         checkOwnership: false    // Set to false to support group gamepasses
       })
     });
+
 
     const data = await response.json();
     

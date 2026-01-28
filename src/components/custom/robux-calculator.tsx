@@ -27,6 +27,7 @@ export function RobuxCalculator() {
   const [usdPrice, setUsdPrice] = useState<number>(0);
   const [step, setStep] = useState(1);
   const [robloxUsername, setRobloxUsername] = useState('');
+  const [placeId, setPlaceId] = useState('');
   const [selectedCrypto, setSelectedCrypto] = useState('ltc');
   const [loading, setLoading] = useState(false);
   const [orderDetails, setOrderDetails] = useState<{
@@ -56,6 +57,10 @@ export function RobuxCalculator() {
       toast.error('Ingresa tu usuario de Roblox');
       return;
     }
+    if (!placeId || isNaN(parseInt(placeId)) || parseInt(placeId) <= 0) {
+      toast.error('Ingresa un Place ID válido');
+      return;
+    }
     if (!selectedCrypto) {
       toast.error('Selecciona una criptomoneda');
       return;
@@ -69,6 +74,7 @@ export function RobuxCalculator() {
         body: JSON.stringify({
           robux_amount: robuxAmount,
           roblox_username: robloxUsername,
+          place_id: parseInt(placeId),
           crypto_currency: selectedCrypto,
         }),
       });
@@ -89,6 +95,7 @@ export function RobuxCalculator() {
     setStep(1);
     setOrderDetails(null);
     setRobloxUsername('');
+    setPlaceId('');
     setDialogOpen(false);
   };
 
@@ -179,8 +186,20 @@ export function RobuxCalculator() {
                     onChange={(e) => setRobloxUsername(e.target.value)}
                     className="bg-white"
                   />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Place ID de tu Gamepass</Label>
+                  <Input 
+                    placeholder="Ej: 1234567890" 
+                    value={placeId}
+                    onChange={(e) => setPlaceId(e.target.value.replace(/\D/g, ''))}
+                    className="bg-white"
+                    type="text"
+                    inputMode="numeric"
+                  />
                   <p className="text-xs text-gray-500">
-                    Los Robux se enviarán a esta cuenta
+                    Crea un gamepass con el precio correcto y pega el Place ID aquí
                   </p>
                 </div>
 

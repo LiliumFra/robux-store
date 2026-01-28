@@ -25,24 +25,30 @@ export async function POST(request: Request) {
       actually_paid
     });
     
-    // Validate order ID format: "ORD|USERNAME|ROBUX_AMOUNT|TIMESTAMP"
+    // Validate order ID format: "ORD|USERNAME|ROBUX_AMOUNT|PLACE_ID|TIMESTAMP"
     if (!order_id || typeof order_id !== 'string') {
       console.error('[NowPayments Webhook] Missing order_id');
       return NextResponse.json({ error: 'Invalid Order ID' }, { status: 400 });
     }
 
     const parts = order_id.split('|');
-    if (parts.length < 3 || parts[0] !== 'ORD') {
+    if (parts.length < 4 || parts[0] !== 'ORD') {
       console.error('[NowPayments Webhook] Invalid order_id format:', order_id);
       return NextResponse.json({ error: 'Invalid Order ID Format' }, { status: 400 });
     }
 
     const roblox_username = parts[1];
     const robux_amount = parseInt(parts[2]);
+    const place_id = parseInt(parts[3]);
 
     if (isNaN(robux_amount) || robux_amount <= 0) {
       console.error('[NowPayments Webhook] Invalid robux amount:', parts[2]);
       return NextResponse.json({ error: 'Invalid Robux amount' }, { status: 400 });
+    }
+
+    if (isNaN(place_id) || place_id <= 0) {
+      console.error('[NowPayments Webhook] Invalid place_id:', parts[3]);
+      return NextResponse.json({ error: 'Invalid Place ID' }, { status: 400 });
     }
 
     // Process payment based on status
@@ -51,10 +57,12 @@ export async function POST(request: Request) {
       console.log('[NowPayments Webhook] ✅ Payment confirmed, creating RBXCrate order:', {
         roblox_username,
         robux_amount,
+        place_id,
         order_id
       });
 
-      const delivery = await createRobuxOrder(robux_amount, roblox_username, order_id);
+      const delivery = await createRobuxOrder(robux_amount, roblox_username, place_id, order_id);
+
       
       if (delivery.success) {
         console.log('[NowPayments Webhook] RBXCrate order created:', delivery);

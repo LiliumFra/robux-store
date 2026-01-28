@@ -32,7 +32,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: result.error.issues[0].message }, { status: 400 });
     }
 
-    const { robux_amount, roblox_username, crypto_currency } = result.data;
+    const { robux_amount, roblox_username, place_id, crypto_currency } = result.data;
 
     // Calculate details
     // Formula: Price = (Desired_Amount / 1000) * 6.5
@@ -40,19 +40,20 @@ export async function POST(request: Request) {
     const robux_with_tax = Math.ceil(robux_amount / 0.7); 
     const usd_price = parseFloat(((robux_amount / 1000) * 6.5).toFixed(2));
     
-    // Generate stateless Order ID: "ORD|USERNAME|GROSS_AMOUNT|TIMESTAMP"
-    // We pass the GROSS amount (robux_with_tax) so the webhook tells RBXCrate to buy the correct GP price.
+    // Generate stateless Order ID: "ORD|USERNAME|GROSS_AMOUNT|PLACE_ID|TIMESTAMP"
+    // We pass the GROSS amount (robux_with_tax) and place_id so webhook can create RBXCrate order
     const safeUsername = roblox_username.replace(/\|/g, '');
-    const order_number = `ORD|${safeUsername}|${robux_with_tax}|${Date.now()}`;
+    const order_number = `ORD|${safeUsername}|${robux_with_tax}|${place_id}|${Date.now()}`;
 
     // Create Payment Aggregator Request
     const paymentData = await createPayment({
         usdAmount: usd_price,
         selectedCrypto: crypto_currency,
-        orderId: order_number, // This ID carries the data
+        orderId: order_number, // This ID carries the data including place_id
         robloxUsername: roblox_username,
         robuxAmount: robux_amount
     });
+
 
     return NextResponse.json({ 
         order: {
