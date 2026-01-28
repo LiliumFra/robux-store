@@ -68,7 +68,23 @@ export function RobuxCalculator() {
 
     setLoading(true);
     try {
-      // First validate the Place ID exists on Roblox
+      // Step 1: Validate the Roblox username exists
+      const userRes = await fetch(`/api/validate-user?username=${encodeURIComponent(robloxUsername)}`);
+      const userData = await userRes.json();
+      
+      if (!userData.valid) {
+        toast.error(userData.error || 'Usuario de Roblox no encontrado');
+        setLoading(false);
+        return;
+      }
+
+      // Use the correct username from Roblox (fixes case)
+      const correctUsername = userData.user.name;
+      if (correctUsername !== robloxUsername) {
+        toast.info(`Usuario corregido: ${correctUsername}`);
+      }
+
+      // Step 2: Validate the Place ID exists on Roblox
       const validateRes = await fetch(`/api/validate-place?placeId=${placeId}`);
       const validateData = await validateRes.json();
       
@@ -79,15 +95,15 @@ export function RobuxCalculator() {
       }
 
       // Show game name for confirmation
-      toast.success(`Juego encontrado: ${validateData.game.name}`);
+      toast.success(`✅ Usuario: ${correctUsername} | Juego: ${validateData.game.name}`);
 
-      // Now create the order
+      // Step 3: Create the order with validated data
       const res = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           robux_amount: robuxAmount,
-          roblox_username: robloxUsername,
+          roblox_username: correctUsername, // Use the corrected username
           place_id: parseInt(placeId),
           crypto_currency: selectedCrypto,
         }),
