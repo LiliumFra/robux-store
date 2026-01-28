@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 
 export function Navbar() {
   return (
@@ -10,13 +9,9 @@ export function Navbar() {
             <span className="text-2xl font-bold text-indigo-600">RobuxStore</span>
           </Link>
         </div>
-        <div className="flex items-center gap-4">
-          <Link href="/dashboard">
-             <Button variant="ghost">Dashboard</Button>
-          </Link>
-          <Link href="/dashboard">
-             <Button className="bg-indigo-600 hover:bg-indigo-700">Comprar Ahora</Button>
-          </Link>
+        <div className="flex items-center gap-4 text-sm text-gray-600">
+          <span>💳 Pago con Cripto</span>
+          <span className="hidden sm:inline">⚡ Entrega Automática</span>
         </div>
       </div>
     </nav>

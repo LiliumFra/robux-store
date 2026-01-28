@@ -30,11 +30,11 @@ export default function Home() {
                   <span className="block text-indigo-600">Fácil y Seguro</span>
                 </h1>
                 <p className="mt-6 text-lg leading-8 text-gray-600">
-                  La forma más rápida de conseguir Robux. Paga con criptomonedas y recibe tus Robux en minutos. Sin complicaciones.
+                  La forma más rápida de conseguir Robux. Paga con criptomonedas y recibe tus Robux en minutos. Sin registro, sin complicaciones.
                 </p>
                 <div className="mt-8 flex items-center gap-x-6">
                    <div className="text-2xl font-bold text-gray-900">
-                     $7 USD <span className="text-sm font-normal text-gray-500">= 1000 Robux</span>
+                     $6.50 USD <span className="text-sm font-normal text-gray-500">= 1000 Robux</span>
                    </div>
                 </div>
               </motion.div>
@@ -65,8 +65,8 @@ export default function Home() {
             
             <div className="grid gap-8 md:grid-cols-3">
               {[
-                { title: '1. Regístrate', desc: 'Crea tu cuenta gratis y verifica tu usuario.', icon: '🎮' },
-                { title: '2. Paga', desc: 'Usa BTC, ETH, USDT y más.', icon: '💳' },
+                { title: '1. Calcula', desc: 'Ingresa la cantidad de Robux que necesitas.', icon: '🎮' },
+                { title: '2. Paga', desc: 'Paga con LTC, BTC, ETH o USDT.', icon: '💳' },
                 { title: '3. Recibe', desc: 'Entrega automática en minutos.', icon: '⚡' },
               ].map((step, i) => (
                 <div key={i} className="relative rounded-2xl bg-white p-8 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
