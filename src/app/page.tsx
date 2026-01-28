@@ -80,6 +80,82 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* FAQ Section */}
+        <section className="py-24 bg-white">
+          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+                Preguntas Frecuentes
+              </h2>
+            </div>
+            
+            <div className="space-y-6">
+              {[
+                {
+                  q: '¿Cómo recibo mis Robux?',
+                  a: 'Creas un Gamepass en tu juego de Roblox con el precio indicado. Nosotros compramos ese Gamepass y tú recibes los Robux automáticamente en tu cuenta.'
+                },
+                {
+                  q: '¿Qué es el Place ID?',
+                  a: 'Es el número único de tu juego en Roblox. Lo encuentras en la URL cuando abres tu juego en Roblox Creator Hub (ej: create.roblox.com/dashboard/creations/experiences/1234567890).'
+                },
+                {
+                  q: '¿Qué precio debe tener mi Gamepass?',
+                  a: 'El sistema te muestra el precio exacto. Por ejemplo, para recibir 1000 Robux, tu Gamepass debe costar 1,429 R$ (incluye el 30% de impuesto de Roblox).'
+                },
+                {
+                  q: '¿Por qué debo desactivar Regional Pricing?',
+                  a: 'El Regional Pricing cambia el precio del Gamepass según la ubicación. Para que el sistema funcione correctamente, debe estar desactivado.'
+                },
+                {
+                  q: '¿Cuánto tiempo tarda?',
+                  a: 'Después de confirmar el pago crypto (2-30 min dependiendo de la moneda), la entrega de Robux es automática en minutos.'
+                },
+                {
+                  q: '¿Es seguro?',
+                  a: 'Sí. Validamos tu Place ID antes de aceptar el pago. Si el Place ID es inválido, no se procesa el pago.'
+                },
+              ].map((faq, i) => (
+                <div key={i} className="rounded-xl border border-gray-200 bg-gray-50 p-6">
+                  <h3 className="font-semibold text-gray-900">{faq.q}</h3>
+                  <p className="mt-2 text-gray-600">{faq.a}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Quick Instructions */}
+            <div className="mt-12 rounded-2xl bg-indigo-50 p-8">
+              <h3 className="text-xl font-bold text-indigo-900 mb-4">📋 Instrucciones Rápidas</h3>
+              <ol className="space-y-3 text-indigo-800">
+                <li className="flex gap-3">
+                  <span className="flex-shrink-0 font-bold">1.</span>
+                  <span>Ve a <strong>Roblox Creator Hub</strong> → Tu experiencia → Monetization → Passes</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="flex-shrink-0 font-bold">2.</span>
+                  <span>Crea un Gamepass con el precio que te indica el calculador</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="flex-shrink-0 font-bold">3.</span>
+                  <span><strong>Desactiva Regional Pricing</strong> en la configuración del Gamepass</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="flex-shrink-0 font-bold">4.</span>
+                  <span>Copia el <strong>Place ID</strong> de tu juego (está en la URL)</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="flex-shrink-0 font-bold">5.</span>
+                  <span>Completa la compra en esta página con tu usuario y Place ID</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="flex-shrink-0 font-bold">6.</span>
+                  <span>Paga con crypto y recibe tus Robux automáticamente ⚡</span>
+                </li>
+              </ol>
+            </div>
+          </div>
+        </section>
       </main>
 
       <Footer />
