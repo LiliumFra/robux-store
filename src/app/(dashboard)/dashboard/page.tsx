@@ -1,6 +1,6 @@
 'use client';
 
-import { useAuthStore } from '@/lib/store';
+// import { useAuthStore } from '@/lib/store';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { StatsCards } from '@/components/custom/stats-cards';
@@ -11,20 +11,19 @@ import { Plus } from 'lucide-react';
 import { Navbar } from '@/components/custom/navbar';
 
 export default function DashboardPage() {
-  const { user, logout, checkSession, isLoading } = useAuthStore();
+  // const { user, logout, checkSession, isLoading } = useAuthStore();
   const router = useRouter();
   const [orders, setOrders] = useState([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
 
-  useEffect(() => {
-    checkSession();
-  }, [checkSession]);
+  // useEffect(() => {
+  //   checkSession();
+  // }, [checkSession]);
 
   useEffect(() => {
-    if (user) {
-      fetchOrders();
-    }
-  }, [user]);
+    // Fetch orders regardless of user
+    fetchOrders();
+  }, []);
 
   async function fetchOrders() {
     try {
@@ -38,8 +37,9 @@ export default function DashboardPage() {
     }
   }
 
-  if (isLoading) return <div className="flex h-screen items-center justify-center">Cargando...</div>;
-  if (!user) return null;
+  // No user check needed
+  // if (isLoading) return <div className="flex h-screen items-center justify-center">Cargando...</div>;
+  // if (!user) return null;
 
   // Calculate stats
   const totalRobux = orders.reduce((acc: number, o: any) => o.status === 'COMPLETED' ? acc + o.robux_amount : acc, 0);
@@ -53,7 +53,7 @@ export default function DashboardPage() {
         <div className="mb-8 flex items-center justify-between">
           <div>
              <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-             <p className="text-gray-600">Bienvenido, {user.roblox_username}</p>
+             <p className="text-gray-600">Bienvenido a Robux Store</p>
           </div>
           <div className="flex gap-4">
              <BuyModal>

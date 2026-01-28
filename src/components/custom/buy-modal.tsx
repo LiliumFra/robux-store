@@ -12,9 +12,9 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Wallet, Bitcoin, CheckCircle } from 'lucide-react'; // Icons
+import { CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
-import { useAuthStore } from '@/lib/store';
+// import { useAuthStore } from '@/lib/store';
 
 const CRYPTO_OPTIONS = [
   { id: 'btc', name: 'Bitcoin', icon: '₿', network: 'Bitcoin' },
@@ -27,9 +27,13 @@ export function BuyModal({ children }: { children: React.ReactNode }) {
   const [step, setStep] = useState(1);
   const [amount, setAmount] = useState(1000);
   const [selectedCrypto, setSelectedCrypto] = useState('');
-  const [orderDetails, setOrderDetails] = useState<any>(null);
+  const [orderDetails, setOrderDetails] = useState<{
+    order: { id: string; order_number: string; robux_amount: number };
+    payment_details: { address: string; amount: string; currency: string };
+  } | null>(null);
   const [loading, setLoading] = useState(false);
-  const { user } = useAuthStore();
+  // const { user } = useAuthStore();
+  const user = { roblox_username: 'Invitado' }; // Placeholder
 
   const handleCreateOrder = async () => {
     if (!selectedCrypto) return toast.error('Selecciona una criptomoneda');
@@ -40,7 +44,8 @@ export function BuyModal({ children }: { children: React.ReactNode }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           robux_amount: amount,
-          roblox_username: user?.roblox_username,
+          roblox_username: user?.roblox_username === 'Invitado' ? (document.getElementById('roblox-user') as HTMLInputElement)?.value : user?.roblox_username, 
+          // We need an input for username if guest!
           crypto_currency: selectedCrypto,
         }),
       });
@@ -72,7 +77,7 @@ export function BuyModal({ children }: { children: React.ReactNode }) {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label>Usuario de Roblox</Label>
-                <Input value={user?.roblox_username || ''} disabled readOnly className="bg-gray-100" />
+                <Input id="roblox-user" placeholder="Ingresa tu usuario" className="bg-white" />
               </div>
               <div className="space-y-2">
                 <Label>Cantidad de Robux</Label>
@@ -87,7 +92,7 @@ export function BuyModal({ children }: { children: React.ReactNode }) {
                 <div className="flex justify-between">
                   <span>Precio Estimado:</span>
                   <span className="font-bold text-green-600">
-                    ${((amount * 1.3) * 0.007).toFixed(2)} USD
+                    ${((amount / 1000) * 6.5).toFixed(2)} USD
                   </span>
                 </div>
               </div>

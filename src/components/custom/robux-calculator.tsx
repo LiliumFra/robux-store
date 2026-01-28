@@ -5,13 +5,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Calculator, Info } from 'lucide-react';
-import { useAuthStore } from '@/lib/store';
+// import { useAuthStore } from '@/lib/store';
 import { useRouter } from 'next/navigation';
 
 export function RobuxCalculator() {
   const [robuxAmount, setRobuxAmount] = useState<number>(1000);
   const [usdPrice, setUsdPrice] = useState<number>(0);
-  const { user } = useAuthStore();
+  // const { user } = useAuthStore();
   const router = useRouter();
 
   // Price Calculation Logic
@@ -29,31 +29,24 @@ export function RobuxCalculator() {
   // If 1000 Robux = $7 USD (base rate), then 1300 Robux = $9.10. ($7 * 1.3 = $9.10).
   // So the logic is: Price = (Desired_Amount * 1.3) * ($7 / 1000).
   
-  const ROB_RATE = 7 / 1000; // $0.007 per Robux (base)
+  // const ROB_RATE = 6.5 / 1000; // Legacy rate
 
   useEffect(() => {
     // Validate minimum
     if (robuxAmount < 100) return;
     
     // Calculate total needed to cover tax
-    // Using prompt logic: Add 30% to the amount.
-    const totalToBuy = Math.ceil(robuxAmount * 1.3); // Simple 30% markup as per prompt example
+    // Formula: Desired / 0.7
+    const totalToBuy = Math.ceil(robuxAmount / 0.7);
     
-    // Calculate price based on the TOTAL amount?
-    // Prompt: "Price: $9.10 USD". 1300 * 0.007 = 9.1.
-    // Yes, price is based on the gross amount.
-    const price = totalToBuy * ROB_RATE;
+    // Price: $6.50 per 1000 (Based on DESIRED amount)
+    const price = (robuxAmount / 1000) * 6.5;
     setUsdPrice(Number(price.toFixed(2)));
   }, [robuxAmount]);
 
   const handleBuy = () => {
-      // Pass amount to order page or dashboard
-      // For now redirect
-      if (user) {
-          router.push(`/dashboard?amount=${robuxAmount}`);
-      } else {
-          router.push('/login');
-      }
+    // Pass amount to dashboard or checkout immediately
+    router.push(`/dashboard?amount=${robuxAmount}`);
   };
 
   return (
@@ -97,11 +90,11 @@ export function RobuxCalculator() {
             </div>
             <div className="flex justify-between text-gray-500">
               <span>Tax de Roblox (30%)</span>
-              <span>+{Math.ceil(robuxAmount * 0.3).toLocaleString()} R$</span>
+              <span>+{Math.ceil((robuxAmount / 0.7) - robuxAmount).toLocaleString()} R$</span>
             </div>
             <div className="border-t pt-2 flex justify-between font-bold text-indigo-900">
               <span>Total a comprar</span>
-              <span>{Math.ceil(robuxAmount * 1.3).toLocaleString()} R$</span>
+              <span>{Math.ceil(robuxAmount / 0.7).toLocaleString()} R$</span>
             </div>
           </div>
 

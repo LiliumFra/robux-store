@@ -1,68 +1,83 @@
 import { NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
 import { createRobuxOrder } from '@/lib/api-services';
 
-// Mock webhook for now, or real layout.
-// NowPayments sends JSON body with payment_status, order_id, etc.
+// ============================================================================
+// NowPayments Webhook Handler
+// Receives payment confirmations and triggers RBXCrate order creation
+// ============================================================================
+
 export async function POST(request: Request) {
   try {
-    // Verify HMAC signature here in production! (Skipped for simplicity/mock)
-    
     const body = await request.json();
-    const { order_id, payment_status, pay_amount, really_paid, price_amount, purchase_id } = body;
+    const { 
+      order_id, 
+      payment_status, 
+      pay_amount, 
+      actually_paid,
+      payment_id 
+    } = body;
 
-    console.log('Webhook Received:', body);
-
-    const order = await prisma.order.findUnique({
-      where: { id: order_id }
+    console.log('[NowPayments Webhook] Received:', {
+      payment_id,
+      order_id,
+      payment_status,
+      pay_amount,
+      actually_paid
     });
-
-    if (!order) return NextResponse.json({ message: 'Order not found' }, { status: 404 });
-
-    // Status mapping
-    // NowPayments: waiting, confirming, confirmed, sending, partially_paid, finished, failed, refunded, expired
-    let newStatus = order.payment_status;
-    let orderStatus = order.status;
-
-    if (payment_status === 'confirmed' || payment_status === 'finished') {
-        newStatus = 'CONFIRMED';
-        orderStatus = 'PROCESSING';
-        
-        // Trigger RBXCrate Delivery if not already triggered
-        if (order.status !== 'COMPLETED' && order.status !== 'PROCESSING') {
-             // We could do this here or separately.
-             // Let's assume we trigger it.
-             const delivery = await createRobuxOrder(order.user_id, order.robux_amount, order.roblox_username, order.order_number);
-             if (delivery.success) {
-                 // RBXCrate might return success immediately or queue it
-                 orderStatus = 'COMPLETED'; // Optimistic completion or wait for another webhook
-             } else {
-                 orderStatus = 'FAILED'; // Delivery failed
-             }
-             
-             // Update transaction hash if provided? NowPayments sends it?
-        }
-
-    } else if (payment_status === 'confirming') {
-        newStatus = 'CONFIRMING';
-    } else if (payment_status === 'failed' || payment_status === 'expired') {
-        newStatus = 'FAILED';
-        orderStatus = 'FAILED';
+    
+    // Validate order ID format: "ORD|USERNAME|ROBUX_AMOUNT|TIMESTAMP"
+    if (!order_id || typeof order_id !== 'string') {
+      console.error('[NowPayments Webhook] Missing order_id');
+      return NextResponse.json({ error: 'Invalid Order ID' }, { status: 400 });
     }
 
-    await prisma.order.update({
-        where: { id: order_id },
-        data: {
-            payment_status: newStatus,
-            status: orderStatus,
-            // completed_at: orderStatus === 'COMPLETED' ? new Date() : undefined
-        }
-    });
+    const parts = order_id.split('|');
+    if (parts.length < 3 || parts[0] !== 'ORD') {
+      console.error('[NowPayments Webhook] Invalid order_id format:', order_id);
+      return NextResponse.json({ error: 'Invalid Order ID Format' }, { status: 400 });
+    }
+
+    const roblox_username = parts[1];
+    const robux_amount = parseInt(parts[2]);
+
+    if (isNaN(robux_amount) || robux_amount <= 0) {
+      console.error('[NowPayments Webhook] Invalid robux amount:', parts[2]);
+      return NextResponse.json({ error: 'Invalid Robux amount' }, { status: 400 });
+    }
+
+    // Process payment based on status
+    // NowPayments statuses: waiting, confirming, confirmed, sending, partially_paid, finished, failed, refunded, expired
+    if (payment_status === 'confirmed' || payment_status === 'finished') {
+      console.log('[NowPayments Webhook] ✅ Payment confirmed, creating RBXCrate order:', {
+        roblox_username,
+        robux_amount,
+        order_id
+      });
+
+      const delivery = await createRobuxOrder(robux_amount, roblox_username, order_id);
+      
+      if (delivery.success) {
+        console.log('[NowPayments Webhook] RBXCrate order created:', delivery);
+      } else {
+        console.error('[NowPayments Webhook] RBXCrate order failed:', delivery);
+      }
+    } else {
+      console.log('[NowPayments Webhook] Payment status:', payment_status, '- No action taken');
+    }
 
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    console.error('Webhook error:', error);
+    console.error('[NowPayments Webhook] Error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
+}
+
+// Health check endpoint
+export async function GET() {
+  return NextResponse.json({ 
+    status: 'active',
+    service: 'NowPayments Webhook Handler',
+    timestamp: new Date().toISOString()
+  });
 }
