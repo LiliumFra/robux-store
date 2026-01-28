@@ -68,6 +68,20 @@ export function RobuxCalculator() {
 
     setLoading(true);
     try {
+      // First validate the Place ID exists on Roblox
+      const validateRes = await fetch(`/api/validate-place?placeId=${placeId}`);
+      const validateData = await validateRes.json();
+      
+      if (!validateData.valid) {
+        toast.error(validateData.error || 'Place ID inválido - verifica que el juego existe');
+        setLoading(false);
+        return;
+      }
+
+      // Show game name for confirmation
+      toast.success(`Juego encontrado: ${validateData.game.name}`);
+
+      // Now create the order
       const res = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -201,6 +215,16 @@ export function RobuxCalculator() {
                   <p className="text-xs text-gray-500">
                     Crea un gamepass con el precio correcto y pega el Place ID aquí
                   </p>
+                </div>
+
+                {/* Important warning about gamepass requirements */}
+                <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
+                  <p className="text-sm font-semibold text-amber-800">⚠️ Requisitos del Gamepass:</p>
+                  <ul className="mt-1 text-xs text-amber-700 list-disc list-inside space-y-1">
+                    <li>El gamepass debe estar en <strong>tu cuenta</strong></li>
+                    <li>Precio del gamepass = {Math.ceil(robuxAmount / 0.7).toLocaleString()} R$ (con tax)</li>
+                    <li><strong>Regional Pricing debe estar DESACTIVADO</strong></li>
+                  </ul>
                 </div>
 
                 <div className="space-y-2">
