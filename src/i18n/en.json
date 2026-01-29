@@ -1,0 +1,108 @@
+{
+  "nav": {
+    "cryptoPayment": "💳 Crypto Payment",
+    "autoDelivery": "⚡ Auto Delivery"
+  },
+  "hero": {
+    "title": "Buy Robux",
+    "subtitle": "Easy and Secure",
+    "description": "The fastest way to get Robux. Pay with cryptocurrency and receive your Robux in minutes. No registration, no hassle.",
+    "price": "1000 Robux"
+  },
+  "calculator": {
+    "title": "Calculator",
+    "bestPrice": "Best Price",
+    "howManyRobux": "How many Robux do you need?",
+    "youWillReceive": "You'll receive",
+    "robloxTax": "Roblox Tax (30%)",
+    "totalToBuy": "Total to purchase",
+    "totalPrice": "Total Price",
+    "buy": "Buy",
+    "minimum": "Minimum is 100 Robux"
+  },
+  "dialog": {
+    "buying": "Buy",
+    "robux": "Robux",
+    "price": "Price",
+    "robloxUsername": "Your Roblox Username",
+    "enterUsername": "Enter your exact username",
+    "placeId": "Place ID of your Gamepass",
+    "placeIdExample": "E.g: 1234567890",
+    "placeIdHelp": "Create a gamepass with the correct price and paste the Place ID here",
+    "requirements": "⚠️ Gamepass Requirements:",
+    "reqOwner": "The gamepass must be on YOUR account",
+    "reqPrice": "Gamepass price =",
+    "reqPricing": "Regional Pricing must be DISABLED",
+    "selectCrypto": "Select Cryptocurrency",
+    "generatePayment": "Generate Payment",
+    "generating": "Generating..."
+  },
+  "orderCreated": {
+    "title": "Order Created!",
+    "sendExact": "Send exactly the amount shown to the following address:",
+    "copyAddress": "Copy Address",
+    "exactAmount": "Exact amount to send",
+    "autoConfirm": "Your payment will be confirmed automatically and you'll receive your Robux in minutes.",
+    "understood": "Done",
+    "successTitle": "Order Submitted Successfully!",
+    "successMessage": "Your order has been received. Once payment is confirmed, your Robux will be delivered automatically.",
+    "orderNumber": "Order Number",
+    "newOrder": "New Order"
+  },
+  "howItWorks": {
+    "title": "How does it work?",
+    "subtitle": "Get your Robux in 3 simple steps",
+    "step1": "1. Calculate",
+    "step1Desc": "Enter the amount of Robux you need.",
+    "step2": "2. Pay",
+    "step2Desc": "Pay with LTC, BTC, ETH or USDT.",
+    "step3": "3. Receive",
+    "step3Desc": "Automatic delivery in minutes."
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "q1": "How do I receive my Robux?",
+    "a1": "You create a Gamepass in your Roblox game with the indicated price. We purchase that Gamepass and you automatically receive the Robux in your account.",
+    "q2": "What is the Place ID?",
+    "a2": "It's the unique number of your game on Roblox. You find it in the URL when you open your game in Roblox Creator Hub (e.g., create.roblox.com/dashboard/creations/experiences/1234567890).",
+    "q3": "What price should my Gamepass be?",
+    "a3": "The system shows you the exact price. For example, to receive 1000 Robux, your Gamepass must cost 1,429 R$ (includes Roblox's 30% tax).",
+    "q4": "Why do I need to disable Regional Pricing?",
+    "a4": "Regional Pricing changes the Gamepass price based on location. For the system to work correctly, it must be disabled.",
+    "q5": "How long does it take?",
+    "a5": "After confirming the crypto payment (2-30 min depending on the currency), Robux delivery is automatic within minutes.",
+    "q6": "Is it safe?",
+    "a6": "Yes. We validate your Place ID before accepting payment. If the Place ID is invalid, the payment won't be processed."
+  },
+  "instructions": {
+    "title": "📋 Quick Instructions",
+    "step1": "Go to Roblox Creator Hub → Your experience → Monetization → Passes",
+    "step2": "Create a Gamepass with the price shown in the calculator",
+    "step3": "Disable Regional Pricing in the Gamepass settings",
+    "step4": "Copy the Place ID of your game (it's in the URL)",
+    "step5": "Complete the purchase on this page with your username and Place ID",
+    "step6": "Pay with crypto and receive your Robux automatically ⚡"
+  },
+  "footer": {
+    "rights": "All rights reserved.",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "contact": "Contact"
+  },
+  "toast": {
+    "userNotFound": "Roblox user not found",
+    "invalidPlaceId": "Invalid Place ID - verify the game exists",
+    "copiedAddress": "Address copied",
+    "userCorrected": "User corrected:",
+    "validatedSuccess": "✅ User:"
+  },
+  "errors": {
+    "invalidEmail": "Invalid email",
+    "passwordMin": "Password must be at least 6 characters",
+    "usernameShort": "Roblox username too short",
+    "passwordRequired": "Password required",
+    "minRobux": "Minimum is 100 Robux",
+    "usernameRequired": "Roblox username required",
+    "placeIdRequired": "Place ID required"
+  }
+}

@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { ArrowRight, Calculator, Info, CheckCircle, Loader2 } from 'lucide-react';
+import { ArrowRight, Calculator, Info, CheckCircle, Loader2, Copy, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   Dialog,
@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useI18n } from '@/i18n';
 
 const CRYPTO_OPTIONS = [
   { id: 'ltc', name: 'Litecoin', icon: 'Ł', network: 'Litecoin' },
@@ -23,6 +24,7 @@ const CRYPTO_OPTIONS = [
 ];
 
 export function RobuxCalculator() {
+  const { t } = useI18n();
   const [robuxAmount, setRobuxAmount] = useState<number>(1000);
   const [usdPrice, setUsdPrice] = useState<number>(0);
   const [step, setStep] = useState(1);
@@ -35,6 +37,7 @@ export function RobuxCalculator() {
     payment_details: { address: string; amount: string; currency: string };
   } | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [addressCopied, setAddressCopied] = useState(false);
 
   // Price: $6.50 per 1000 Robux (what user receives)
   useEffect(() => {
@@ -45,7 +48,7 @@ export function RobuxCalculator() {
 
   const handleStartPurchase = () => {
     if (robuxAmount < 100) {
-      toast.error('El mínimo es 100 Robux');
+      toast.error(t.calculator.minimum);
       return;
     }
     setDialogOpen(true);
@@ -54,15 +57,15 @@ export function RobuxCalculator() {
 
   const handleCreateOrder = async () => {
     if (!robloxUsername || robloxUsername.length < 3) {
-      toast.error('Ingresa tu usuario de Roblox');
+      toast.error(t.errors.usernameRequired);
       return;
     }
     if (!placeId || isNaN(parseInt(placeId)) || parseInt(placeId) <= 0) {
-      toast.error('Ingresa un Place ID válido');
+      toast.error(t.errors.placeIdRequired);
       return;
     }
     if (!selectedCrypto) {
-      toast.error('Selecciona una criptomoneda');
+      toast.error(t.dialog.selectCrypto);
       return;
     }
 
@@ -73,7 +76,7 @@ export function RobuxCalculator() {
       const userData = await userRes.json();
       
       if (!userData.valid) {
-        toast.error(userData.error || 'Usuario de Roblox no encontrado');
+        toast.error(userData.error || t.toast.userNotFound);
         setLoading(false);
         return;
       }
@@ -81,7 +84,7 @@ export function RobuxCalculator() {
       // Use the correct username from Roblox (fixes case)
       const correctUsername = userData.user.name;
       if (correctUsername !== robloxUsername) {
-        toast.info(`Usuario corregido: ${correctUsername}`);
+        toast.info(`${t.toast.userCorrected} ${correctUsername}`);
       }
 
       // Step 2: Validate the Place ID exists on Roblox
@@ -89,13 +92,13 @@ export function RobuxCalculator() {
       const validateData = await validateRes.json();
       
       if (!validateData.valid) {
-        toast.error(validateData.error || 'Place ID inválido - verifica que el juego existe');
+        toast.error(validateData.error || t.toast.invalidPlaceId);
         setLoading(false);
         return;
       }
 
       // Show game name for confirmation
-      toast.success(`✅ Usuario: ${correctUsername} | Juego: ${validateData.game.name}`);
+      toast.success(`${t.toast.validatedSuccess} ${correctUsername} | Game: ${validateData.game.name}`);
 
       // Step 3: Create the order with validated data
       const res = await fetch('/api/orders', {
@@ -103,22 +106,35 @@ export function RobuxCalculator() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           robux_amount: robuxAmount,
-          roblox_username: correctUsername, // Use the corrected username
+          roblox_username: correctUsername,
           place_id: parseInt(placeId),
           crypto_currency: selectedCrypto,
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Error creando orden');
+      if (!res.ok) throw new Error(data.error || 'Error creating order');
 
       setOrderDetails(data);
-      setStep(3);
+      setStep(2); // Go to payment step
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : 'Error desconocido';
+      const message = error instanceof Error ? error.message : 'Unknown error';
       toast.error(message);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCopyAddress = () => {
+    if (orderDetails) {
+      navigator.clipboard.writeText(orderDetails.payment_details.address);
+      setAddressCopied(true);
+      toast.success(t.toast.copiedAddress);
+      setTimeout(() => setAddressCopied(false), 3000);
+    }
+  };
+
+  const handlePaymentSent = () => {
+    setStep(3); // Go to confirmation step
   };
 
   const resetFlow = () => {
@@ -127,26 +143,34 @@ export function RobuxCalculator() {
     setRobloxUsername('');
     setPlaceId('');
     setDialogOpen(false);
+    setAddressCopied(false);
+  };
+
+  const startNewOrder = () => {
+    setStep(1);
+    setOrderDetails(null);
+    setAddressCopied(false);
+    // Keep username and placeId for convenience
   };
 
   return (
     <>
-      <Card className="w-full max-w-md border-indigo-100 bg-white/95 shadow-xl backdrop-blur">
+      <Card className="w-full max-w-md border-border bg-card shadow-xl">
         <CardContent className="p-6">
-          <div className="mb-4 flex items-center justify-between text-indigo-900">
-            <h3 className="flex items-center gap-2 font-bold text-lg">
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="flex items-center gap-2 font-bold text-lg text-card-foreground">
               <Calculator className="h-5 w-5" />
-              Calculadora
+              {t.calculator.title}
             </h3>
-            <span className="rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700">
-              Mejor Precio
+            <span className="rounded-full bg-indigo-100 dark:bg-indigo-900 px-3 py-1 text-xs font-semibold text-indigo-700 dark:text-indigo-300">
+              {t.calculator.bestPrice}
             </span>
           </div>
 
           <div className="space-y-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-600">
-                ¿Cuántos Robux necesitas?
+              <label className="text-sm font-medium text-muted-foreground">
+                {t.calculator.howManyRobux}
               </label>
               <div className="relative">
                 <Input
@@ -154,41 +178,41 @@ export function RobuxCalculator() {
                   min="100"
                   value={robuxAmount}
                   onChange={(e) => setRobuxAmount(Number(e.target.value))}
-                  className="h-12 border-2 border-indigo-100 text-lg font-bold text-gray-900 focus:border-indigo-500"
+                  className="h-12 border-2 text-lg font-bold focus:border-indigo-500"
                 />
-                <span className="absolute right-4 top-3 text-sm font-bold text-gray-400">
+                <span className="absolute right-4 top-3 text-sm font-bold text-muted-foreground">
                   Robux
                 </span>
               </div>
             </div>
 
-            <div className="rounded-lg bg-gray-50 p-4 space-y-2 text-sm">
-              <div className="flex justify-between text-gray-600">
+            <div className="rounded-lg bg-muted p-4 space-y-2 text-sm">
+              <div className="flex justify-between text-muted-foreground">
                 <span className="flex items-center gap-1">
-                  Recibirás <Info className="h-3 w-3" />
+                  {t.calculator.youWillReceive} <Info className="h-3 w-3" />
                 </span>
-                <span className="font-bold text-gray-900">{robuxAmount.toLocaleString()} R$</span>
+                <span className="font-bold text-foreground">{robuxAmount.toLocaleString()} R$</span>
               </div>
-              <div className="flex justify-between text-gray-500">
-                <span>Tax de Roblox (30%)</span>
+              <div className="flex justify-between text-muted-foreground">
+                <span>{t.calculator.robloxTax}</span>
                 <span>+{Math.ceil((robuxAmount / 0.7) - robuxAmount).toLocaleString()} R$</span>
               </div>
-              <div className="border-t pt-2 flex justify-between font-bold text-indigo-900">
-                <span>Total a comprar</span>
+              <div className="border-t border-border pt-2 flex justify-between font-bold text-indigo-600 dark:text-indigo-400">
+                <span>{t.calculator.totalToBuy}</span>
                 <span>{Math.ceil(robuxAmount / 0.7).toLocaleString()} R$</span>
               </div>
             </div>
 
             <div className="flex items-center justify-between pt-2">
                <div className="text-left">
-                  <p className="text-sm text-gray-500">Precio Total</p>
-                  <p className="text-3xl font-bold text-green-600">${usdPrice} USD</p>
+                 <p className="text-sm text-muted-foreground">{t.calculator.totalPrice}</p>
+                 <p className="text-3xl font-bold text-green-600 dark:text-green-400">${usdPrice} USD</p>
                </div>
                <Button 
-                  onClick={handleStartPurchase}
-                  className="h-12 bg-indigo-600 px-8 text-lg hover:bg-indigo-700 shadow-lg shadow-indigo-200"
+                 onClick={handleStartPurchase}
+                 className="h-12 bg-indigo-600 px-8 text-lg hover:bg-indigo-700 shadow-lg"
                >
-                  Comprar <ArrowRight className="ml-2 h-5 w-5" />
+                 {t.calculator.buy} <ArrowRight className="ml-2 h-5 w-5" />
                </Button>
             </div>
           </div>
@@ -196,67 +220,75 @@ export function RobuxCalculator() {
       </Card>
 
       {/* Purchase Dialog */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+      <Dialog open={dialogOpen} onOpenChange={(open) => {
+        // Only allow closing if on step 1, otherwise show warning
+        if (!open && step > 1 && step < 3) {
+          // User trying to close during payment - don't close automatically
+          return;
+        }
+        setDialogOpen(open);
+      }}>
+        <DialogContent className="sm:max-w-[425px]" onPointerDownOutside={(e) => {
+          // Prevent closing by clicking outside during payment
+          if (step === 2) e.preventDefault();
+        }}>
           <DialogHeader>
-            <DialogTitle>Comprar {robuxAmount.toLocaleString()} Robux</DialogTitle>
+            <DialogTitle>{t.dialog.buying} {robuxAmount.toLocaleString()} {t.dialog.robux}</DialogTitle>
             <DialogDescription>
-              Precio: ${usdPrice} USD
+              {t.dialog.price}: ${usdPrice} USD
             </DialogDescription>
           </DialogHeader>
 
           <div className="mt-4">
+            {/* Step 1: Enter Details */}
             {step === 1 && (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Tu Usuario de Roblox</Label>
+                  <Label>{t.dialog.robloxUsername}</Label>
                   <Input 
-                    placeholder="Ingresa tu usuario exacto" 
+                    placeholder={t.dialog.enterUsername}
                     value={robloxUsername}
                     onChange={(e) => setRobloxUsername(e.target.value)}
-                    className="bg-white"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Place ID de tu Gamepass</Label>
+                  <Label>{t.dialog.placeId}</Label>
                   <Input 
-                    placeholder="Ej: 1234567890" 
+                    placeholder={t.dialog.placeIdExample}
                     value={placeId}
                     onChange={(e) => setPlaceId(e.target.value.replace(/\D/g, ''))}
-                    className="bg-white"
                     type="text"
                     inputMode="numeric"
                   />
-                  <p className="text-xs text-gray-500">
-                    Crea un gamepass con el precio correcto y pega el Place ID aquí
+                  <p className="text-xs text-muted-foreground">
+                    {t.dialog.placeIdHelp}
                   </p>
                 </div>
 
-                {/* Important warning about gamepass requirements */}
-                <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
-                  <p className="text-sm font-semibold text-amber-800">⚠️ Requisitos del Gamepass:</p>
-                  <ul className="mt-1 text-xs text-amber-700 list-disc list-inside space-y-1">
-                    <li>El gamepass debe estar en <strong>tu cuenta</strong></li>
-                    <li>Precio del gamepass = {Math.ceil(robuxAmount / 0.7).toLocaleString()} R$ (con tax)</li>
-                    <li><strong>Regional Pricing debe estar DESACTIVADO</strong></li>
+                <div className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/50 p-3">
+                  <p className="text-sm font-semibold text-amber-800 dark:text-amber-200">{t.dialog.requirements}</p>
+                  <ul className="mt-1 text-xs text-amber-700 dark:text-amber-300 list-disc list-inside space-y-1">
+                    <li>{t.dialog.reqOwner}</li>
+                    <li>{t.dialog.reqPrice} {Math.ceil(robuxAmount / 0.7).toLocaleString()} R$</li>
+                    <li><strong>{t.dialog.reqPricing}</strong></li>
                   </ul>
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Selecciona Criptomoneda</Label>
+                  <Label>{t.dialog.selectCrypto}</Label>
                   <div className="grid grid-cols-2 gap-2">
                     {CRYPTO_OPTIONS.map((crypto) => (
                       <div
                         key={crypto.id}
                         onClick={() => setSelectedCrypto(crypto.id)}
-                        className={`cursor-pointer rounded-lg border p-3 flex flex-col items-center hover:bg-gray-50 transition-colors ${
-                          selectedCrypto === crypto.id ? 'border-indigo-600 bg-indigo-50' : 'border-gray-200'
+                        className={`cursor-pointer rounded-lg border p-3 flex flex-col items-center hover:bg-accent transition-colors ${
+                          selectedCrypto === crypto.id ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-950' : 'border-border'
                         }`}
                       >
                         <span className="text-2xl">{crypto.icon}</span>
                         <span className="text-sm font-bold">{crypto.name}</span>
-                        <span className="text-xs text-gray-500">{crypto.network}</span>
+                        <span className="text-xs text-muted-foreground">{crypto.network}</span>
                       </div>
                     ))}
                   </div>
@@ -270,54 +302,97 @@ export function RobuxCalculator() {
                   {loading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Generando...
+                      {t.dialog.generating}
                     </>
                   ) : (
-                    'Generar Pago'
+                    t.dialog.generatePayment
                   )}
                 </Button>
               </div>
             )}
 
-            {step === 3 && orderDetails && (
-              <div className="space-y-4 text-center">
-                <CheckCircle className="mx-auto h-12 w-12 text-green-500" />
-                <h3 className="font-bold text-lg">¡Orden Creada!</h3>
-                <p className="text-sm text-gray-600">
-                  Envía exactamente la cantidad indicada a la siguiente dirección:
-                </p>
+            {/* Step 2: Payment Details */}
+            {step === 2 && orderDetails && (
+              <div className="space-y-4">
+                <div className="text-center">
+                  <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900">
+                    <ExternalLink className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+                  </div>
+                  <h3 className="font-bold text-lg text-foreground">{t.orderCreated.title}</h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {t.orderCreated.sendExact}
+                  </p>
+                </div>
                 
-                <div className="rounded-lg bg-gray-100 p-4 break-all text-xs font-mono">
+                <div className="rounded-lg bg-muted p-4 break-all text-xs font-mono text-center">
                   {orderDetails.payment_details.address}
                 </div>
+                
                 <Button 
                   variant="outline" 
-                  size="sm"
-                  onClick={() => {
-                    navigator.clipboard.writeText(orderDetails.payment_details.address);
-                    toast.success('Dirección copiada');
-                  }}
+                  className="w-full"
+                  onClick={handleCopyAddress}
                 >
-                  Copiar Dirección
+                  <Copy className="mr-2 h-4 w-4" />
+                  {addressCopied ? '✓' : ''} {t.orderCreated.copyAddress}
                 </Button>
 
-                <div className="my-2 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                  <p className="text-lg font-bold text-yellow-800">
+                <div className="p-4 bg-yellow-50 dark:bg-yellow-950/50 rounded-lg border border-yellow-200 dark:border-yellow-800 text-center">
+                  <p className="text-2xl font-bold text-yellow-800 dark:text-yellow-200">
                     {orderDetails.payment_details.amount} {orderDetails.payment_details.currency.toUpperCase()}
                   </p>
-                  <p className="text-xs text-yellow-700">Monto exacto a enviar</p>
+                  <p className="text-xs text-yellow-700 dark:text-yellow-300">{t.orderCreated.exactAmount}</p>
                 </div>
 
-                <div className="text-xs text-gray-500">
-                  Tu pago se confirmará automáticamente y recibirás tus Robux en minutos.
+                <div className="text-xs text-muted-foreground text-center">
+                  {t.orderCreated.autoConfirm}
                 </div>
 
                 <Button 
-                  className="w-full bg-indigo-600 hover:bg-indigo-700"
-                  onClick={resetFlow}
+                  className="w-full bg-green-600 hover:bg-green-700"
+                  onClick={handlePaymentSent}
                 >
-                  Entendido
+                  <CheckCircle className="mr-2 h-4 w-4" />
+                  {t.orderCreated.understood}
                 </Button>
+              </div>
+            )}
+
+            {/* Step 3: Order Confirmation */}
+            {step === 3 && orderDetails && (
+              <div className="space-y-4 text-center">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
+                  <CheckCircle className="h-10 w-10 text-green-600 dark:text-green-400" />
+                </div>
+                
+                <h3 className="font-bold text-xl text-foreground">{t.orderCreated.successTitle}</h3>
+                
+                <p className="text-muted-foreground">
+                  {t.orderCreated.successMessage}
+                </p>
+
+                <div className="rounded-lg bg-muted p-4">
+                  <p className="text-xs text-muted-foreground">{t.orderCreated.orderNumber}</p>
+                  <p className="font-mono text-sm font-bold text-foreground break-all">
+                    {orderDetails.order.order_number.split('|')[4] || orderDetails.order.id}
+                  </p>
+                </div>
+
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline"
+                    className="flex-1"
+                    onClick={startNewOrder}
+                  >
+                    {t.orderCreated.newOrder}
+                  </Button>
+                  <Button 
+                    className="flex-1 bg-indigo-600 hover:bg-indigo-700"
+                    onClick={resetFlow}
+                  >
+                    {t.orderCreated.understood}
+                  </Button>
+                </div>
               </div>
             )}
           </div>

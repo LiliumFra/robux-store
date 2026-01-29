@@ -1,14 +1,51 @@
 import { NextResponse } from 'next/server';
 import { createRobuxOrder } from '@/lib/api-services';
+import crypto from 'crypto';
 
 // ============================================================================
 // NowPayments Webhook Handler
+// Documentation: https://nowpayments.io/help/ipn
 // Receives payment confirmations and triggers RBXCrate order creation
 // ============================================================================
+
+// Verify NowPayments signature (HMAC SHA-512)
+// The signature is sent in the x-nowpayments-sig header
+function verifySignature(body: Record<string, unknown>, signature: string): boolean {
+  const ipnSecret = process.env.NOWPAYMENTS_IPN_SECRET;
+  
+  if (!ipnSecret) {
+    console.warn('[NowPayments Webhook] IPN secret not configured - skipping verification');
+    return true; // Allow in development without secret
+  }
+  
+  // Sort the body keys alphabetically and create JSON string
+  const sortedKeys = Object.keys(body).sort();
+  const sortedBody: Record<string, unknown> = {};
+  for (const key of sortedKeys) {
+    sortedBody[key] = body[key];
+  }
+  const jsonString = JSON.stringify(sortedBody);
+  
+  // Create HMAC SHA-512 signature
+  const expectedSignature = crypto
+    .createHmac('sha512', ipnSecret)
+    .update(jsonString)
+    .digest('hex');
+  
+  return expectedSignature === signature;
+}
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    
+    // Verify signature if IPN secret is configured
+    const signature = request.headers.get('x-nowpayments-sig');
+    if (signature && !verifySignature(body, signature)) {
+      console.error('[NowPayments Webhook] Invalid signature');
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+    }
+    
     const { 
       order_id, 
       payment_status, 
@@ -54,7 +91,7 @@ export async function POST(request: Request) {
     // Process payment based on status
     // NowPayments statuses: waiting, confirming, confirmed, sending, partially_paid, finished, failed, refunded, expired
     if (payment_status === 'confirmed' || payment_status === 'finished') {
-      console.log('[NowPayments Webhook] ✅ Payment confirmed, creating RBXCrate order:', {
+      console.log('[NowPayments Webhook] ✅ Payment confirmed, creating order:', {
         roblox_username,
         robux_amount,
         place_id,
@@ -65,9 +102,9 @@ export async function POST(request: Request) {
 
       
       if (delivery.success) {
-        console.log('[NowPayments Webhook] RBXCrate order created:', delivery);
+        console.log('[NowPayments Webhook] Order created:', delivery);
       } else {
-        console.error('[NowPayments Webhook] RBXCrate order failed:', delivery);
+        console.error('[NowPayments Webhook] Order creation failed:', delivery);
       }
     } else {
       console.log('[NowPayments Webhook] Payment status:', payment_status, '- No action taken');
