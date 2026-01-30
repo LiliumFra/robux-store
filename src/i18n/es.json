@@ -104,5 +104,31 @@
     "minRobux": "El mínimo es 100 Robux",
     "usernameRequired": "Usuario de Roblox requerido",
     "placeIdRequired": "Place ID requerido"
+  },
+  "payment": {
+    "step1Title": "Paso 1: Ingresa tus datos",
+    "step1Desc": "Completa tu usuario de Roblox y el Place ID de tu Gamepass",
+    "step2Title": "Paso 2: Realiza el pago",
+    "step2Desc": "Envía el monto exacto a la dirección indicada",
+    "step3Title": "Paso 3: Pago confirmado",
+    "step3Desc": "¡Tu pedido está siendo procesado!",
+    "networkWarning": "⚠️ Envía SOLO en la red",
+    "wrongNetwork": "Si envías en otra red, tu pago podría perderse",
+    "checkTransactions": "Verifica tus Robux en",
+    "robloxTransactions": "Transacciones de Roblox",
+    "notificationTitle": "¡Compra confirmada!",
+    "notificationBody": "Tu pedido de Robux está siendo procesado. Revisa tus transacciones en Roblox.",
+    "paymentAddress": "Dirección de pago",
+    "network": "Red",
+    "memoRequired": "⚠️ MEMO/TAG requerido",
+    "memoWarning": "Este pago requiere un Memo o Destination Tag. Sin él, tu pago no será detectado.",
+    "step": "Paso",
+    "of": "de",
+    "availableCurrencies": "Monedas disponibles",
+    "selectPaymentMethod": "Selecciona método de pago",
+    "popularOptions": "Opciones populares",
+    "allOptions": "Todas las opciones",
+    "fastTransaction": "Transacción rápida",
+    "lowFees": "Bajas comisiones"
   }
 }
