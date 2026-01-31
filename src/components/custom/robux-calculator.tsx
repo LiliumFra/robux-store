@@ -433,10 +433,10 @@ export function RobuxCalculator() {
                 </div>
 
                 {/* Network Warning - VERY PROMINENT */}
-                <div className="rounded-lg border-2 border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-950/50 p-4">
-                  <div className="flex items-center gap-2 mb-2">
+                <div className="rounded-lg border-2 border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-950/50 p-3 sm:p-4">
+                  <div className="flex items-start sm:items-center gap-2 mb-2">
                     <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400 shrink-0" />
-                    <span className="font-bold text-red-700 dark:text-red-300">
+                    <span className="font-bold text-sm sm:text-base text-red-700 dark:text-red-300">
                       {t.payment?.networkWarning || "⚠️ Send ONLY on the"} {selectedCryptoDetails?.networkShort} {t.payment?.network || "network"}
                     </span>
                   </div>
@@ -450,10 +450,10 @@ export function RobuxCalculator() {
 
                 {/* Memo Warning for XRP, XLM, etc */}
                 {selectedCryptoDetails?.requiresMemo && (
-                  <div className="rounded-lg border-2 border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/50 p-4">
-                    <div className="flex items-center gap-2 mb-1">
+                  <div className="rounded-lg border-2 border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/50 p-3 sm:p-4">
+                    <div className="flex items-start sm:items-center gap-2 mb-1">
                       <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-                      <span className="font-bold text-amber-700 dark:text-amber-300">
+                      <span className="font-bold text-sm sm:text-base text-amber-700 dark:text-amber-300">
                         {t.payment?.memoRequired || "⚠️ MEMO/TAG required"}
                       </span>
                     </div>
@@ -483,7 +483,7 @@ export function RobuxCalculator() {
                 </Button>
 
                 {/* Amount to Send */}
-                <div className="p-4 bg-yellow-50 dark:bg-yellow-950/50 rounded-lg border-2 border-yellow-300 dark:border-yellow-700 text-center">
+                <div className="p-3 sm:p-4 bg-yellow-50 dark:bg-yellow-950/50 rounded-lg border-2 border-yellow-300 dark:border-yellow-700 text-center">
                   <p className="text-xs text-yellow-700 dark:text-yellow-300 mb-1">
                     {t.orderCreated.exactAmount}
                   </p>
