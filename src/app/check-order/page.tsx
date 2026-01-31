@@ -137,17 +137,17 @@ export default function CheckOrderPage() {
             {/* Search Form */}
             <div className="space-y-2">
               <Label>{locale === 'es' ? 'Número de Orden' : 'Order Number'}</Label>
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <Input
                   placeholder="ORD|username|1000|12345|..."
                   value={orderId}
                   onChange={(e) => setOrderId(e.target.value)}
-                  className="font-mono text-sm"
+                  className="font-mono text-xs sm:text-sm"
                 />
                 <Button 
                   onClick={handleCheckOrder}
                   disabled={loading}
-                  className="bg-indigo-600 hover:bg-indigo-700 shrink-0"
+                  className="bg-indigo-600 hover:bg-indigo-700 shrink-0 w-full sm:w-auto"
                 >
                   {loading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />

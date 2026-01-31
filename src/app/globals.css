@@ -122,4 +122,28 @@
   body {
     @apply bg-background text-foreground;
   }
+  /* Mobile responsiveness improvements */
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  html,
+  body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+  /* Improve tap targets for mobile */
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    touch-action: manipulation;
+  }
+  /* Better scrolling on mobile */
+  @supports (-webkit-overflow-scrolling: touch) {
+    body {
+      -webkit-overflow-scrolling: touch;
+    }
+  }
 }

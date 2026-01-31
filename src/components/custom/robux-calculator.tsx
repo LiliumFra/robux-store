@@ -216,13 +216,13 @@ export function RobuxCalculator() {
   return (
     <>
       <Card className="w-full max-w-md border-border bg-card shadow-xl">
-        <CardContent className="p-6">
+        <CardContent className="p-4 sm:p-6">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="flex items-center gap-2 font-bold text-lg text-card-foreground">
+            <h3 className="flex items-center gap-2 font-bold text-base sm:text-lg text-card-foreground">
               <Calculator className="h-5 w-5" />
               {t.calculator.title}
             </h3>
-            <span className="rounded-full bg-indigo-100 dark:bg-indigo-900 px-3 py-1 text-xs font-semibold text-indigo-700 dark:text-indigo-300">
+            <span className="rounded-full bg-indigo-100 dark:bg-indigo-900 px-2 sm:px-3 py-1 text-xs font-semibold text-indigo-700 dark:text-indigo-300">
               {t.calculator.bestPrice}
             </span>
           </div>
@@ -266,11 +266,11 @@ export function RobuxCalculator() {
             <div className="flex items-center justify-between pt-2">
                <div className="text-left">
                  <p className="text-sm text-muted-foreground">{t.calculator.totalPrice}</p>
-                 <p className="text-3xl font-bold text-green-600 dark:text-green-400">${usdPrice} USD</p>
+                 <p className="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400">${usdPrice} USD</p>
                </div>
                <Button 
                  onClick={handleStartPurchase}
-                 className="h-12 bg-indigo-600 px-8 text-lg hover:bg-indigo-700 shadow-lg"
+                 className="h-10 sm:h-12 bg-indigo-600 px-4 sm:px-8 text-base sm:text-lg hover:bg-indigo-700 shadow-lg"
                >
                  {t.calculator.buy} <ArrowRight className="ml-2 h-5 w-5" />
                </Button>
