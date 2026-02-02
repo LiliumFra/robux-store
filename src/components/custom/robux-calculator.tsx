@@ -158,11 +158,36 @@ export function RobuxCalculator() {
     }
   };
 
-  const handlePaymentSent = () => {
-    // Send push notification
-    sendPurchaseNotification(robuxAmount, locale as 'es' | 'en');
-    setStep(3); // Go to confirmation step
+  const handleVerifyPayment = async () => {
+    if (!orderDetails) return;
+    
+    setLoading(true);
+    try {
+      toast.info(t.payment?.checkingPayment || t.checkOrder?.checking || "Checking payment...");
+      
+      const res = await fetch(`/api/orders/status?orderId=${orderDetails.order.order_number}`);
+      const data = await res.json();
+      
+      if (!res.ok) throw new Error(data.error || 'Error checking status');
+      
+      // If status is anything other than pending/waiting, we can proceed
+      if (data.status === 'confirming' || data.status === 'completed' || data.status === 'sending' || data.rawStatus === 'finished') {
+         sendPurchaseNotification(robuxAmount, locale as 'es' | 'en');
+         setStep(3);
+         toast.success(t.orderCreated?.successTitle || "Payment Confirmed!");
+      } else {
+         toast.warning(t.payment?.paymentNotFound || "Payment not found yet. Please wait.");
+      }
+      
+    } catch (error) {
+       console.error(error);
+       toast.error(t.payment?.errorChecking || "Error checking payment");
+    } finally {
+       setLoading(false);
+    }
   };
+
+
 
   const resetFlow = () => {
     setStep(1);
@@ -479,6 +504,16 @@ export function RobuxCalculator() {
                   </p>
                 </div>
 
+                {/* NEW: Network Fee Warning */}
+                <div className="rounded-lg border border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950/50 p-3">
+                    <div className="flex items-start gap-2">
+                       <Info className="h-4 w-4 text-orange-600 dark:text-orange-400 shrink-0 mt-0.5" />
+                       <div className="text-xs text-orange-700 dark:text-orange-300">
+                          <p className="font-bold mb-0.5">{t.payment?.networkFeeWarning || "⚠️ You must pay the network fee. The merchant must receive the exact amount shown."}</p>
+                       </div>
+                    </div>
+                </div>
+
                 {/* LTC Address Note */}
                 {selectedCrypto === 'ltc' && (
                   <div className="rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/50 p-3">
@@ -540,12 +575,18 @@ export function RobuxCalculator() {
                   {t.orderCreated.autoConfirm}
                 </div>
 
+                {/* Verified Payment Button */}
                 <Button 
                   className="w-full h-12 bg-green-600 hover:bg-green-700 text-base"
-                  onClick={handlePaymentSent}
+                  onClick={handleVerifyPayment}
+                  disabled={loading}
                 >
-                  <CheckCircle className="mr-2 h-5 w-5" />
-                  {t.orderCreated.understood}
+                  {loading ? (
+                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  ) : (
+                     <CheckCircle className="mr-2 h-5 w-5" />
+                  )}
+                  {t.payment?.verifyPayment || "I have paid, verify now"}
                 </Button>
               </div>
             )}

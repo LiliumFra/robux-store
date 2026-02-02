@@ -106,6 +106,7 @@
     "placeIdRequired": "Place ID requerido"
   },
   "payment": {
+    "errorChecking": "Error al verificar el pago. Por favor intenta de nuevo.",
     "step1Title": "Paso 1: Ingresa tus datos",
     "step1Desc": "Completa tu usuario de Roblox y el Place ID de tu Gamepass",
     "step2Title": "Paso 2: Realiza el pago",
@@ -113,6 +114,10 @@
     "step3Title": "Paso 3: Pago confirmado",
     "step3Desc": "¡Tu pedido está siendo procesado!",
     "networkWarning": "⚠️ Envía SOLO en la red",
+    "networkFeeWarning": "⚠️ Debes pagar la comisión de red. El comercio debe recibir el monto exacto mostrado.",
+    "checkingPayment": "Verificando pago...",
+    "verifyPayment": "Ya pagué, verificar ahora",
+    "paymentNotFound": "Pago no encontrado aún. Por favor espera un momento e intenta de nuevo.",
     "wrongNetwork": "Si envías en otra red, tu pago podría perderse",
     "checkTransactions": "Verifica tus Robux en",
     "robloxTransactions": "Transacciones de Roblox",
@@ -140,6 +145,7 @@
     "segwitNote": "Es una dirección SegWit estándar. Es segura y soportada por todas las wallets modernas (Binance, Coinbase, etc)."
   },
   "checkOrder": {
+    "checking": "Verificando estado del pago...",
     "closedPagePrompt": "¿Cerraste la página? Puedes verificar tu pedido después:",
     "button": "Verificar Pedido",
     "gameName": "Juego"

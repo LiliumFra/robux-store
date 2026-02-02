@@ -106,6 +106,7 @@
     "placeIdRequired": "Place ID required"
   },
   "payment": {
+    "errorChecking": "Error checking payment status. Please try again.",
     "step1Title": "Step 1: Enter your details",
     "step1Desc": "Complete your Roblox username and Gamepass Place ID",
     "step2Title": "Step 2: Make payment",
@@ -113,6 +114,10 @@
     "step3Title": "Step 3: Payment confirmed",
     "step3Desc": "Your order is being processed!",
     "networkWarning": "⚠️ Send ONLY on the",
+    "networkFeeWarning": "⚠️ You must pay the network fee. The merchant must receive the exact amount shown.",
+    "checkingPayment": "Checking payment...",
+    "verifyPayment": "I have paid, verify now",
+    "paymentNotFound": "Payment not found yet. Please wait a moment and try again.",
     "wrongNetwork": "If you send on another network, your payment may be lost",
     "checkTransactions": "Check your Robux at",
     "robloxTransactions": "Roblox Transactions",
@@ -140,6 +145,7 @@
     "segwitNote": "This is a standard SegWit address. It is safe and supported by all modern wallets (Binance, Coinbase, etc)."
   },
   "checkOrder": {
+    "checking": "Checking payment status...",
     "closedPagePrompt": "Closed the page? You can check your order later:",
     "button": "Check Order Status",
     "gameName": "Game"
