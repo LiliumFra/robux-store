@@ -17,7 +17,7 @@ export default function Home() {
         {/* Hero Section */}
         <section className="relative overflow-hidden bg-background pb-12 pt-16 sm:pb-16 sm:pt-20 lg:pt-32">
           <div className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
-             <div className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"></div>
+             <div className="relative left-[calc(50%-11rem)] aspect-1155/678 w-144.5 -translate-x-1/2 rotate-30 bg-linear-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-288.75"></div>
           </div>
           
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -114,27 +114,27 @@ export default function Home() {
               <h3 className="text-lg sm:text-xl font-bold text-indigo-900 dark:text-indigo-100 mb-3 sm:mb-4">{t.instructions.title}</h3>
               <ol className="space-y-3 text-indigo-800 dark:text-indigo-200">
                 <li className="flex gap-3">
-                  <span className="flex-shrink-0 font-bold">1.</span>
+                  <span className="shrink-0 font-bold">1.</span>
                   <span>{t.instructions.step1}</span>
                 </li>
                 <li className="flex gap-3">
-                  <span className="flex-shrink-0 font-bold">2.</span>
+                  <span className="shrink-0 font-bold">2.</span>
                   <span>{t.instructions.step2}</span>
                 </li>
                 <li className="flex gap-3">
-                  <span className="flex-shrink-0 font-bold">3.</span>
+                  <span className="shrink-0 font-bold">3.</span>
                   <span><strong>{t.instructions.step3}</strong></span>
                 </li>
                 <li className="flex gap-3">
-                  <span className="flex-shrink-0 font-bold">4.</span>
+                  <span className="shrink-0 font-bold">4.</span>
                   <span>{t.instructions.step4}</span>
                 </li>
                 <li className="flex gap-3">
-                  <span className="flex-shrink-0 font-bold">5.</span>
+                  <span className="shrink-0 font-bold">5.</span>
                   <span>{t.instructions.step5}</span>
                 </li>
                 <li className="flex gap-3">
-                  <span className="flex-shrink-0 font-bold">6.</span>
+                  <span className="shrink-0 font-bold">6.</span>
                   <span>{t.instructions.step6}</span>
                 </li>
               </ol>

@@ -57,6 +57,31 @@ export async function createRobuxOrder(robuxAmount: number, robloxUsername: stri
   }
 }
 
+
+// ============================================================================
+// NowPayments - Get Minimum Amount
+// ============================================================================
+export async function getMinAmount(currency_from: string = 'usd', currency_to: string) {
+  if (!NOWPAYMENTS_API_KEY || NOWPAYMENTS_API_KEY.includes('placeholder')) {
+     return { min_amount: 0.5 }; // Mock min amount
+  }
+
+  try {
+    const response = await fetch(`https://api.nowpayments.io/v1/min-amount?currency_from=${currency_from}&currency_to=${currency_to}&fiat_equivalent=usd`, {
+      method: 'GET',
+      headers: {
+        'x-api-key': NOWPAYMENTS_API_KEY
+      }
+    });
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('[NowPayments] Error getting min amount:', error);
+    return { min_amount: 0 }; // Fail safe
+  }
+}
+
 // ============================================================================
 // NowPayments - Create Crypto Payment Invoice
 // ============================================================================
@@ -79,6 +104,12 @@ export async function createPayment(orderData: {
   }
 
   try {
+     // 1. Check Minimum Amount first to avoid API errors
+     const minAmountData = await getMinAmount('usd', orderData.selectedCrypto);
+     if (minAmountData.fiat_equivalent && orderData.usdAmount < minAmountData.fiat_equivalent) {
+        throw new Error(`The minimum payment amount is $${minAmountData.fiat_equivalent} USD. Please increase your Robux amount.`);
+     }
+
     const response = await fetch('https://api.nowpayments.io/v1/payment', {
       method: 'POST',
       headers: {
@@ -93,7 +124,8 @@ export async function createPayment(orderData: {
         order_description: `${orderData.robuxAmount} Robux para ${orderData.robloxUsername}`,
         ipn_callback_url: `${DOMAIN}/api/webhooks/nowpayments`,
         success_url: `${DOMAIN}/?status=success`,
-        cancel_url: `${DOMAIN}/?status=cancelled`
+        cancel_url: `${DOMAIN}/?status=cancelled`,
+        fixed_rate: true // Enable fixed rate to avoid volatility
       })
     });
 

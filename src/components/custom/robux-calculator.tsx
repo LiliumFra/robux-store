@@ -189,7 +189,7 @@ export function RobuxCalculator() {
   const popularCrypto = CRYPTO_OPTIONS.filter(c => c.popular);
   const displayedCrypto = showAllCrypto ? CRYPTO_OPTIONS : popularCrypto;
 
-  // Step indicator component
+
   const StepIndicator = ({ currentStep }: { currentStep: number }) => (
     <div className="flex items-center justify-center gap-2 mb-4">
       {[1, 2, 3].map((s) => (
@@ -212,6 +212,33 @@ export function RobuxCalculator() {
       ))}
     </div>
   );
+
+  // New Countdown Timer Component
+  const CountdownTimer = ({ durationSec = 1200 }: { durationSec?: number }) => {
+     const [timeLeft, setTimeLeft] = useState(durationSec);
+
+     useEffect(() => {
+       const timer = setInterval(() => {
+         setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
+       }, 1000);
+       return () => clearInterval(timer);
+     }, []);
+
+     const minutes = Math.floor(timeLeft / 60);
+     const seconds = timeLeft % 60;
+     const isUrgent = timeLeft < 300; // < 5 mins
+
+     return (
+       <div className={`text-center mb-4 p-2 rounded-lg border ${isUrgent ? 'bg-red-50 border-red-200 text-red-700 animate-pulse' : 'bg-blue-50 border-blue-200 text-blue-700'}`}>
+          <p className="text-xs font-semibold uppercase tracking-wider mb-1">
+             {isUrgent ? 'Rate Expiring Soon!' : 'Exchange Rate Locked'}
+          </p>
+          <p className="text-2xl font-mono font-bold">
+             {minutes.toString().padStart(2, '0')}:{seconds.toString().padStart(2, '0')}
+          </p>
+       </div>
+     );
+  };
 
   return (
     <>
@@ -432,6 +459,10 @@ export function RobuxCalculator() {
                   </p>
                 </div>
 
+
+                {/* Countdown Timer for Fixed Rate */}
+                <CountdownTimer />
+
                 {/* Network Warning - VERY PROMINENT */}
                 <div className="rounded-lg border-2 border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-950/50 p-3 sm:p-4">
                   <div className="flex items-start sm:items-center gap-2 mb-2">
@@ -447,6 +478,19 @@ export function RobuxCalculator() {
                     {t.payment?.wrongNetwork || "If you send on another network, your payment may be lost"}
                   </p>
                 </div>
+
+                {/* LTC Address Note */}
+                {selectedCrypto === 'ltc' && (
+                  <div className="rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/50 p-3">
+                    <div className="flex items-start gap-2">
+                       <Info className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
+                       <div className="text-xs text-blue-700 dark:text-blue-300">
+                          <p className="font-semibold mb-0.5">Start with &apos;M&apos; address?</p>
+                          <p>This is a standard <strong>SegWit</strong> address. It is safe and supported by all modern wallets (Binance, Coinbase, etc).</p>
+                       </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Memo Warning for XRP, XLM, etc */}
                 {selectedCryptoDetails?.requiresMemo && (
