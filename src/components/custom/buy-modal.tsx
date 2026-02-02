@@ -54,8 +54,8 @@ export function BuyModal({ children }: { children: React.ReactNode }) {
 
       setOrderDetails(data);
       setStep(3); // Go to Payment
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error: unknown) {
+      toast.error((error as Error).message || 'Error creating order');
     } finally {
       setLoading(false);
     }

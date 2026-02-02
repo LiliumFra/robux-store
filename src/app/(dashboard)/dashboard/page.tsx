@@ -2,9 +2,8 @@
 
 // import { useAuthStore } from '@/lib/store';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { StatsCards } from '@/components/custom/stats-cards';
-import { OrderHistory } from '@/components/custom/order-history';
+import { OrderHistory, Order } from '@/components/custom/order-history';
 import { BuyModal } from '@/components/custom/buy-modal';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
@@ -12,8 +11,7 @@ import { Navbar } from '@/components/custom/navbar';
 
 export default function DashboardPage() {
   // const { user, logout, checkSession, isLoading } = useAuthStore();
-  const router = useRouter();
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
 
   // useEffect(() => {
@@ -42,9 +40,9 @@ export default function DashboardPage() {
   // if (!user) return null;
 
   // Calculate stats
-  const totalRobux = orders.reduce((acc: number, o: any) => o.status === 'COMPLETED' ? acc + o.robux_amount : acc, 0);
-  const totalSpent = orders.reduce((acc: number, o: any) => o.status === 'COMPLETED' ? acc + o.usd_price : acc, 0);
-  const totalOrders = orders.filter((o: any) => o.status === 'COMPLETED').length;
+  const totalRobux = orders.reduce((acc: number, o: Order) => o.status === 'COMPLETED' ? acc + o.robux_amount : acc, 0);
+  const totalSpent = orders.reduce((acc: number, o: Order) => o.status === 'COMPLETED' ? acc + o.usd_price : acc, 0);
+  const totalOrders = orders.filter((o: Order) => o.status === 'COMPLETED').length;
 
   return (
     <div className="min-h-screen bg-gray-50">

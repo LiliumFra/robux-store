@@ -7,7 +7,7 @@ import { createPayment } from '@/lib/api-services';
 export async function GET() {
   // GET orders is less useful without user context, maybe return empty or all?
   // Returning empty for anonymous for now
-  const orders: any[] = []; 
+  const orders: unknown[] = []; 
   
   // To allow checking status by ID, we might need a specific endpoint /api/orders/[id]
   // But for this list, we'll return empty or all (admin style). 

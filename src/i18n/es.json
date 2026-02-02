@@ -130,5 +130,18 @@
     "allOptions": "Todas las opciones",
     "fastTransaction": "Transacción rápida",
     "lowFees": "Bajas comisiones"
+  },
+  "timer": {
+    "expiringSoon": "¡La tasa expira pronto!",
+    "rateLocked": "Tasa de cambio bloqueada"
+  },
+  "ltc": {
+    "startWithM": "¿Empieza con 'M'?",
+    "segwitNote": "Es una dirección SegWit estándar. Es segura y soportada por todas las wallets modernas (Binance, Coinbase, etc)."
+  },
+  "checkOrder": {
+    "closedPagePrompt": "¿Cerraste la página? Puedes verificar tu pedido después:",
+    "button": "Verificar Pedido",
+    "gameName": "Juego"
   }
 }

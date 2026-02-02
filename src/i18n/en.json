@@ -130,5 +130,18 @@
     "allOptions": "All options",
     "fastTransaction": "Fast transaction",
     "lowFees": "Low fees"
+  },
+  "timer": {
+    "expiringSoon": "Rate Expiring Soon!",
+    "rateLocked": "Exchange Rate Locked"
+  },
+  "ltc": {
+    "startWithM": "Start with 'M' address?",
+    "segwitNote": "This is a standard SegWit address. It is safe and supported by all modern wallets (Binance, Coinbase, etc)."
+  },
+  "checkOrder": {
+    "closedPagePrompt": "Closed the page? You can check your order later:",
+    "button": "Check Order Status",
+    "gameName": "Game"
   }
 }

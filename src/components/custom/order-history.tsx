@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/dialog';
 import { useState } from 'react';
 
-interface Order {
+export interface Order {
   id: string;
   order_number: string;
   robux_amount: number;

@@ -123,7 +123,7 @@ export function RobuxCalculator() {
       }
 
       // Show game name for confirmation
-      toast.success(`${t.toast.validatedSuccess} ${correctUsername} | Game: ${validateData.game.name}`);
+      toast.success(`${t.toast.validatedSuccess} ${correctUsername} | ${t.checkOrder.gameName}: ${validateData.game.name}`);
 
       // Step 3: Create the order with validated data
       const res = await fetch('/api/orders', {
@@ -231,7 +231,7 @@ export function RobuxCalculator() {
      return (
        <div className={`text-center mb-4 p-2 rounded-lg border ${isUrgent ? 'bg-red-50 border-red-200 text-red-700 animate-pulse' : 'bg-blue-50 border-blue-200 text-blue-700'}`}>
           <p className="text-xs font-semibold uppercase tracking-wider mb-1">
-             {isUrgent ? 'Rate Expiring Soon!' : 'Exchange Rate Locked'}
+             {isUrgent ? t.timer.expiringSoon : t.timer.rateLocked}
           </p>
           <p className="text-2xl font-mono font-bold">
              {minutes.toString().padStart(2, '0')}:{seconds.toString().padStart(2, '0')}
@@ -485,8 +485,8 @@ export function RobuxCalculator() {
                     <div className="flex items-start gap-2">
                        <Info className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
                        <div className="text-xs text-blue-700 dark:text-blue-300">
-                          <p className="font-semibold mb-0.5">Start with &apos;M&apos; address?</p>
-                          <p>This is a standard <strong>SegWit</strong> address. It is safe and supported by all modern wallets (Binance, Coinbase, etc).</p>
+                          <p className="font-semibold mb-0.5">{t.ltc.startWithM}</p>
+                          <p>{t.ltc.segwitNote}</p>
                        </div>
                     </div>
                   </div>
@@ -599,16 +599,14 @@ export function RobuxCalculator() {
                 {/* Check Order Link */}
                 <div className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/50 p-4 text-center">
                   <p className="text-sm text-amber-700 dark:text-amber-300 mb-2">
-                    {locale === 'es'
-                      ? '¿Cerraste la página? Puedes verificar tu pedido después:'
-                      : 'Closed the page? You can check your order later:'}
+                    {t.checkOrder.closedPagePrompt}
                   </p>
                   <Link 
                     href="/check-order"
                     className="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-medium transition-colors"
                   >
                     <Search className="h-4 w-4" />
-                    {locale === 'es' ? 'Verificar Pedido' : 'Check Order Status'}
+                    {t.checkOrder.button}
                   </Link>
                 </div>
 

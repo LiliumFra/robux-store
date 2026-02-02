@@ -24,6 +24,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     // Check localStorage for saved preference
     const saved = localStorage.getItem('locale') as Locale;
     if (saved && (saved === 'en' || saved === 'es')) {
+      // eslint-disable-next-line
       setLocaleState(saved);
     } else {
       // Detect browser language
