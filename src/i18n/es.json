@@ -148,6 +148,12 @@
     "checking": "Verificando estado del pago...",
     "closedPagePrompt": "¿Cerraste la página? Puedes verificar tu pedido después:",
     "button": "Verificar Pedido",
-    "gameName": "Juego"
+    "gameName": "Juego",
+    "instructions": {
+      "title": "Cómo rastrear tu pedido",
+      "step1": "Después del pago, busca el ID de Orden en la pantalla de confirmación.",
+      "step2": "Comienza con ORD| seguido de tu usuario.",
+      "step3": "Copia el ID completo y pégalo arriba."
+    }
   }
 }

@@ -148,6 +148,12 @@
     "checking": "Checking payment status...",
     "closedPagePrompt": "Closed the page? You can check your order later:",
     "button": "Check Order Status",
-    "gameName": "Game"
+    "gameName": "Game",
+    "instructions": {
+      "title": "How to track your order",
+      "step1": "After payment, look for the Order ID on the confirmation screen.",
+      "step2": "It starts with ORD| followed by your username.",
+      "step3": "Copy the full ID and paste it above."
+    }
   }
 }

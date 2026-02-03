@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Search, Clock, CheckCircle, AlertCircle, Loader2, ExternalLink, XCircle, ArrowLeft } from 'lucide-react';
+import { Search, Clock, CheckCircle, AlertCircle, Loader2, ExternalLink, XCircle, ArrowLeft, Clipboard } from 'lucide-react';
 import { useI18n } from '@/i18n';
 import Link from 'next/link';
 
@@ -277,15 +277,41 @@ export default function CheckOrderPage() {
             )}
 
             {/* Help Text */}
-            <div className="rounded-lg bg-muted p-4 text-sm text-muted-foreground">
-              <p className="font-medium mb-1">
-                {locale === 'es' ? '¿Dónde encuentro mi número de orden?' : 'Where do I find my order number?'}
-              </p>
-              <p>
-                {locale === 'es'
-                  ? 'El número de orden se muestra después de generar tu pago. Empieza con "ORD|" seguido de tu usuario.'
-                  : 'The order number is shown after generating your payment. It starts with "ORD|" followed by your username.'}
-              </p>
+            {/* Instructions */}
+            <div className="rounded-lg bg-indigo-50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/50 p-5">
+              <div className="flex items-center gap-2 mb-4">
+                <Clipboard className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+                <h3 className="font-semibold text-foreground">
+                  {locale === 'es' ? 'Cómo rastrear tu pedido' : 'How to track your order'}
+                </h3>
+              </div>
+              
+              <ul className="space-y-3">
+                <li className="flex gap-3 text-sm text-muted-foreground">
+                  <span className="shrink-0 w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-xs">1</span>
+                  <span>
+                    {locale === 'es' 
+                      ? 'Después del pago, busca el ID de Orden en la pantalla de confirmación.' 
+                      : 'After payment, look for the Order ID on the confirmation screen.'}
+                  </span>
+                </li>
+                <li className="flex gap-3 text-sm text-muted-foreground">
+                  <span className="shrink-0 w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-xs">2</span>
+                  <span>
+                    {locale === 'es'
+                      ? <span>Comienza con <code className="bg-muted px-1 py-0.5 rounded font-mono text-foreground font-semibold">ORD|</code> seguido de tu usuario.</span>
+                      : <span>It starts with <code className="bg-muted px-1 py-0.5 rounded font-mono text-foreground font-semibold">ORD|</code> followed by your username.</span>}
+                  </span>
+                </li>
+                <li className="flex gap-3 text-sm text-muted-foreground">
+                  <span className="shrink-0 w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-xs">3</span>
+                  <span>
+                    {locale === 'es'
+                      ? 'Copia el ID completo y pégalo arriba.'
+                      : 'Copy the full ID and paste it above.'}
+                  </span>
+                </li>
+              </ul>
             </div>
           </CardContent>
         </Card>
