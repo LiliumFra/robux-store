@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { orderSchema } from '@/lib/validators';
 import { createPayment } from '@/lib/api-services';
+import { createPreference } from '@/lib/mercadopago';
 
 const DOMAIN = process.env.NEXT_PUBLIC_APP_URL || 'https://robux-store.vercel.app';
 
@@ -38,24 +39,15 @@ export async function POST(request: Request) {
 
     // ⭐ ROUTER: Choose payment method
     if (payment_method === 'mercadopago') {
-      // Create Mercado Pago preference
-      const mpResponse = await fetch(`${DOMAIN}/api/mercadopago/create-payment`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          robux_amount,
-          roblox_username: safeUsername,
-          place_id,
-          order_id: order_number,
-          usd_price,
-        }),
+      // Create Mercado Pago preference directly via service
+      // This avoids internal fetch calls and potential 500/404 errors due to base URL issues
+      const mpData = await createPreference({
+        robux_amount,
+        roblox_username: safeUsername,
+        place_id,
+        order_id: order_number,
+        usd_price,
       });
-
-      const mpData = await mpResponse.json();
-
-      if (!mpResponse.ok) {
-        throw new Error(mpData.error || 'Failed to create Mercado Pago payment');
-      }
 
       return NextResponse.json({
         order: {

@@ -60,4 +60,90 @@ export function verifyWebhookSignature(): boolean {
   // Mercado Pago doesn't send a traditional HMAC signature in webhooks.
   // Instead, we verify by calling the MP API directly (getPaymentStatus).
   return true;
+/**
+ * Create a payment preference in Mercado Pago.
+ * Returns the preference ID and init_point for redirect.
+ */
+import { Preference } from 'mercadopago';
+import { DOMAIN } from '@/app/api/mercadopago/config';
+import { getUsdtExchangeRate } from './exchange-rate';
+
+export interface CreatePreferenceParams {
+  robux_amount: number;
+  roblox_username: string;
+  place_id: number;
+  order_id: string; // "ORD|..."
+  usd_price: number;
+}
+
+export async function createPreference(params: CreatePreferenceParams) {
+  const { robux_amount, roblox_username, place_id, order_id, usd_price } = params;
+
+  if (!MP_ACCESS_TOKEN) {
+    throw new Error('Mercado Pago Access Token not configured');
+  }
+
+  // Fetch current USDT/ARS exchange rate
+  const exchangeRate = await getUsdtExchangeRate();
+  const unitPriceArs = parseFloat((usd_price * exchangeRate).toFixed(2));
+
+  console.log('[MP Service] Creating preference:', {
+    external_reference: order_id,
+    amount_usd: usd_price,
+    exchange_rate: exchangeRate,
+    amount_ars: unitPriceArs,
+    username: roblox_username,
+  });
+
+  const preference = new Preference(mpClient);
+  
+  const response = await preference.create({
+    body: {
+      items: [
+        {
+          id: order_id,
+          title: `${robux_amount} Robux (Digital Goods)`,
+          description: `Entrega automática en Roblox. Rate: 1 USDT ≈ $${exchangeRate} ARS`,
+          picture_url: 'https://robux-store.vercel.app/robux-icon.png',
+          category_id: 'virtual_goods',
+          quantity: 1,
+          unit_price: unitPriceArs,
+          currency_id: 'ARS',
+        },
+      ],
+      payer: {
+        email: 'no-reply@robuxstore.com',
+      },
+      external_reference: order_id,
+      notification_url: `${DOMAIN}/api/webhooks/mercadopago`,
+      auto_return: 'approved',
+      back_urls: {
+        success: `${DOMAIN}/payment-success?order_id=${encodeURIComponent(order_id)}`,
+        failure: `${DOMAIN}/payment-failure?order_id=${encodeURIComponent(order_id)}`,
+        pending: `${DOMAIN}/payment-pending?order_id=${encodeURIComponent(order_id)}`,
+      },
+      binary_mode: true,
+      statement_descriptor: 'ROBUXSTORE',
+      metadata: {
+        place_id,
+        roblox_username,
+        robux_amount,
+        usd_price,
+        exchange_rate: exchangeRate,
+      },
+    },
+  });
+
+  if (!response.init_point) {
+    console.error('[MP Service] No init_point in response:', response);
+    throw new Error('Failed to create preference');
+  }
+
+  console.log('[MP Service] ✅ Preference created:', response.id);
+
+  return {
+    preference_id: response.id,
+    init_point: response.init_point,
+    sandbox_init_point: response.sandbox_init_point,
+  };
 }
