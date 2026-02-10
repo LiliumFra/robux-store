@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { Preference } from 'mercadopago';
 import { mpClient, DOMAIN } from '../config';
+import { getUsdtExchangeRate } from '@/lib/exchange-rate';
 
 // Validate incoming request data
 const paymentRequestSchema = z.object({
@@ -28,9 +29,15 @@ export async function POST(request: Request) {
 
     const { robux_amount, roblox_username, place_id, order_id, usd_price } = validation.data;
 
+    // Fetch current USDT/ARS exchange rate
+    const exchangeRate = await getUsdtExchangeRate();
+    const unitPriceArs = parseFloat((usd_price * exchangeRate).toFixed(2));
+
     console.log('[MP Create] Creating preference:', {
       external_reference: order_id,
-      amount: usd_price,
+      amount_usd: usd_price,
+      exchange_rate: exchangeRate,
+      amount_ars: unitPriceArs,
       username: roblox_username,
     });
 
@@ -41,10 +48,12 @@ export async function POST(request: Request) {
         items: [
           {
             id: order_id,
-            title: `${robux_amount} Robux para ${roblox_username}`,
-            description: `Entrega automática en Place ID: ${place_id}`,
-            unit_price: usd_price,
+            title: `${robux_amount} Robux (Digital Goods)`,
+            description: `Entrega automática en Roblox. Rate: 1 USDT ≈ $${exchangeRate} ARS`,
+            picture_url: 'https://robux-store.vercel.app/robux-icon.png',
+            category_id: 'virtual_goods',
             quantity: 1,
+            unit_price: unitPriceArs,
             currency_id: 'ARS',
           },
         ],
@@ -65,6 +74,8 @@ export async function POST(request: Request) {
           place_id,
           roblox_username,
           robux_amount,
+          usd_price,
+          exchange_rate: exchangeRate,
         },
       },
     });
