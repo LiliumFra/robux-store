@@ -1,5 +1,6 @@
-import { Payment } from 'mercadopago';
-import { mpClient, MP_ACCESS_TOKEN } from '@/app/api/mercadopago/config';
+import { Payment, Preference } from 'mercadopago';
+import { mpClient, MP_ACCESS_TOKEN, DOMAIN } from '@/app/api/mercadopago/config';
+import { getUsdtExchangeRate } from '@/lib/exchange-rate';
 
 interface MPPaymentStatus {
   id: number;
@@ -8,6 +9,14 @@ interface MPPaymentStatus {
   transaction_amount: number;
   currency_id: string;
   description: string;
+}
+
+export interface CreatePreferenceParams {
+  robux_amount: number;
+  roblox_username: string;
+  place_id: number;
+  order_id: string; // "ORD|..."
+  usd_price: number;
 }
 
 /**
@@ -60,22 +69,12 @@ export function verifyWebhookSignature(): boolean {
   // Mercado Pago doesn't send a traditional HMAC signature in webhooks.
   // Instead, we verify by calling the MP API directly (getPaymentStatus).
   return true;
+}
+
 /**
  * Create a payment preference in Mercado Pago.
  * Returns the preference ID and init_point for redirect.
  */
-import { Preference } from 'mercadopago';
-import { DOMAIN } from '@/app/api/mercadopago/config';
-import { getUsdtExchangeRate } from './exchange-rate';
-
-export interface CreatePreferenceParams {
-  robux_amount: number;
-  roblox_username: string;
-  place_id: number;
-  order_id: string; // "ORD|..."
-  usd_price: number;
-}
-
 export async function createPreference(params: CreatePreferenceParams) {
   const { robux_amount, roblox_username, place_id, order_id, usd_price } = params;
 
