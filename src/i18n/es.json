@@ -155,5 +155,33 @@
       "step2": "Comienza con ORD| seguido de tu usuario.",
       "step3": "Copia el ID completo y pégalo arriba."
     }
+  },
+  "paymentMethod": {
+    "title": "¿Cómo deseas pagar?",
+    "crypto": "Criptomonedas",
+    "cryptoDesc": "Bitcoin, Ethereum, Litecoin...",
+    "mercadopago": "Mercado Pago",
+    "mercadopagoDesc": "Tarjeta, débito, transferencia..."
+  },
+  "paymentSuccess": {
+    "title": "¡Pago Aprobado!",
+    "message": "Tu orden está siendo procesada. Recibirás tus Robux en 1-5 minutos.",
+    "backHome": "Volver al Inicio"
+  },
+  "paymentFailure": {
+    "title": "Pago Rechazado",
+    "message": "Tu pago no pudo ser procesado. Esto puede deberse a fondos insuficientes, datos incorrectos, o una tarjeta bloqueada.",
+    "tipsTitle": "💡 Sugerencias:",
+    "tip1": "Verifica que tengas fondos suficientes",
+    "tip2": "Prueba con otro método de pago",
+    "tip3": "Contacta a tu banco si el problema persiste",
+    "retry": "Intentar de Nuevo",
+    "contactSupport": "Contactar Soporte"
+  },
+  "paymentPending": {
+    "title": "Pago Pendiente",
+    "message": "Tu pago está siendo procesado. Esto puede tardar unos minutos. Recibirás tus Robux una vez que se confirme.",
+    "checkLater": "Puedes verificar el estado de tu pedido:",
+    "backHome": "Volver al Inicio"
   }
 }

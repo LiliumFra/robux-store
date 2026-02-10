@@ -155,5 +155,33 @@
       "step2": "It starts with ORD| followed by your username.",
       "step3": "Copy the full ID and paste it above."
     }
+  },
+  "paymentMethod": {
+    "title": "How would you like to pay?",
+    "crypto": "Cryptocurrency",
+    "cryptoDesc": "Bitcoin, Ethereum, Litecoin...",
+    "mercadopago": "Mercado Pago",
+    "mercadopagoDesc": "Card, debit, bank transfer..."
+  },
+  "paymentSuccess": {
+    "title": "Payment Approved!",
+    "message": "Your order is being processed. You'll receive your Robux in 1-5 minutes.",
+    "backHome": "Back to Home"
+  },
+  "paymentFailure": {
+    "title": "Payment Rejected",
+    "message": "Your payment could not be processed. This may be due to insufficient funds, incorrect data, or a blocked card.",
+    "tipsTitle": "💡 Suggestions:",
+    "tip1": "Verify you have sufficient funds",
+    "tip2": "Try a different payment method",
+    "tip3": "Contact your bank if the issue persists",
+    "retry": "Try Again",
+    "contactSupport": "Contact Support"
+  },
+  "paymentPending": {
+    "title": "Payment Pending",
+    "message": "Your payment is being processed. This may take a few minutes. You'll receive your Robux once confirmed.",
+    "checkLater": "You can check your order status:",
+    "backHome": "Back to Home"
   }
 }

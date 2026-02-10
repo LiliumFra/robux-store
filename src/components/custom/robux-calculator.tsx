@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { ArrowRight, Calculator, Info, CheckCircle, Loader2, Copy, ExternalLink, AlertTriangle, Search } from 'lucide-react';
 import { toast } from 'sonner';
+import { PaymentMethodSelector } from './payment-method-selector';
 import {
   Dialog,
   DialogContent,
@@ -48,11 +49,12 @@ export function RobuxCalculator() {
   const [robloxUsername, setRobloxUsername] = useState('');
   const [placeId, setPlaceId] = useState('');
   const [selectedCrypto, setSelectedCrypto] = useState('ltc');
+  const [paymentMethod, setPaymentMethod] = useState<'crypto' | 'mercadopago'>('crypto');
   const [loading, setLoading] = useState(false);
   const [showAllCrypto, setShowAllCrypto] = useState(false);
   const [orderDetails, setOrderDetails] = useState<{
-    order: { id: string; order_number: string; robux_amount: number };
-    payment_details: { address: string; amount: string; currency: string };
+    order: { id: string; order_number: string; robux_amount: number; payment_method?: string };
+    payment_details: { address?: string; amount?: string; currency?: string; type?: string; init_point?: string; sandbox_init_point?: string; preference_id?: string };
   } | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [addressCopied, setAddressCopied] = useState(false);
@@ -89,7 +91,7 @@ export function RobuxCalculator() {
       toast.error(t.errors.placeIdRequired);
       return;
     }
-    if (!selectedCrypto) {
+    if (paymentMethod === 'crypto' && !selectedCrypto) {
       toast.error(t.dialog.selectCrypto);
       return;
     }
@@ -133,14 +135,21 @@ export function RobuxCalculator() {
           robux_amount: robuxAmount,
           roblox_username: correctUsername,
           place_id: parseInt(placeId),
+          payment_method: paymentMethod,
           crypto_currency: selectedCrypto,
         }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Error creating order');
 
+      // If Mercado Pago, redirect to checkout
+      if (paymentMethod === 'mercadopago' && data.payment_details?.init_point) {
+        window.location.href = data.payment_details.init_point;
+        return;
+      }
+
       setOrderDetails(data);
-      setStep(2); // Go to payment step
+      setStep(2); // Go to payment step (crypto)
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Unknown error';
       toast.error(message);
@@ -150,7 +159,7 @@ export function RobuxCalculator() {
   };
 
   const handleCopyAddress = () => {
-    if (orderDetails) {
+    if (orderDetails?.payment_details?.address) {
       navigator.clipboard.writeText(orderDetails.payment_details.address);
       setAddressCopied(true);
       toast.success(t.toast.copiedAddress);
@@ -407,52 +416,60 @@ export function RobuxCalculator() {
                   </ul>
                 </div>
 
-                {/* Cryptocurrency Selection */}
-                <div className="space-y-2">
-                  <Label>{t.payment?.selectPaymentMethod || t.dialog.selectCrypto}</Label>
-                  
-                  {/* Crypto Grid - Responsive */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {displayedCrypto.map((crypto) => (
-                      <div
-                        key={crypto.id}
-                        onClick={() => setSelectedCrypto(crypto.id)}
-                        className={`cursor-pointer rounded-lg border p-2 sm:p-3 flex flex-col items-center hover:bg-accent transition-colors ${
-                          selectedCrypto === crypto.id ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-950 ring-2 ring-indigo-600' : 'border-border'
-                        }`}
-                      >
-                        <span className="text-xl sm:text-2xl">{crypto.icon}</span>
-                        <span className="text-xs sm:text-sm font-bold">{crypto.name}</span>
-                        <span className="text-[10px] sm:text-xs text-muted-foreground">{crypto.networkShort}</span>
-                        {/* Badges */}
-                        <div className="flex gap-1 mt-1 flex-wrap justify-center">
-                          {crypto.fast && (
-                            <span className="text-[8px] px-1 py-0.5 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded">
-                              {t.payment?.fastTransaction || '⚡ Fast'}
-                            </span>
-                          )}
-                          {crypto.lowFee && (
-                            <span className="text-[8px] px-1 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded">
-                              {t.payment?.lowFees || '💰 Low'}
-                            </span>
-                          )}
+                {/* Payment Method Selection */}
+                <PaymentMethodSelector 
+                  value={paymentMethod}
+                  onChange={setPaymentMethod}
+                />
+
+                {/* Cryptocurrency Selection — only shown for crypto */}
+                {paymentMethod === 'crypto' && (
+                  <div className="space-y-2">
+                    <Label>{t.payment?.selectPaymentMethod || t.dialog.selectCrypto}</Label>
+                    
+                    {/* Crypto Grid - Responsive */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {displayedCrypto.map((crypto) => (
+                        <div
+                          key={crypto.id}
+                          onClick={() => setSelectedCrypto(crypto.id)}
+                          className={`cursor-pointer rounded-lg border p-2 sm:p-3 flex flex-col items-center hover:bg-accent transition-colors ${
+                            selectedCrypto === crypto.id ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-950 ring-2 ring-indigo-600' : 'border-border'
+                          }`}
+                        >
+                          <span className="text-xl sm:text-2xl">{crypto.icon}</span>
+                          <span className="text-xs sm:text-sm font-bold">{crypto.name}</span>
+                          <span className="text-[10px] sm:text-xs text-muted-foreground">{crypto.networkShort}</span>
+                          {/* Badges */}
+                          <div className="flex gap-1 mt-1 flex-wrap justify-center">
+                            {crypto.fast && (
+                              <span className="text-[8px] px-1 py-0.5 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded">
+                                {t.payment?.fastTransaction || '⚡ Fast'}
+                              </span>
+                            )}
+                            {crypto.lowFee && (
+                              <span className="text-[8px] px-1 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded">
+                                {t.payment?.lowFees || '💰 Low'}
+                              </span>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
+                    
+                    {/* Show More Options */}
+                    {!showAllCrypto && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="w-full text-xs"
+                        onClick={() => setShowAllCrypto(true)}
+                      >
+                        {t.payment?.allOptions || "Show all options"} ({CRYPTO_OPTIONS.length} {t.payment?.availableCurrencies || "currencies"})
+                      </Button>
+                    )}
                   </div>
-                  
-                  {/* Show More Options */}
-                  {!showAllCrypto && (
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="w-full text-xs"
-                      onClick={() => setShowAllCrypto(true)}
-                    >
-                      {t.payment?.allOptions || "Show all options"} ({CRYPTO_OPTIONS.length} {t.payment?.availableCurrencies || "currencies"})
-                    </Button>
-                  )}
-                </div>
+                )}
 
                 <Button
                   className="w-full h-12 bg-indigo-600 hover:bg-indigo-700 text-base"
@@ -548,7 +565,7 @@ export function RobuxCalculator() {
                     {t.payment?.paymentAddress || "Payment address"} ({selectedCryptoDetails?.networkShort})
                   </Label>
                   <div className="rounded-lg bg-muted p-3 break-all text-xs font-mono text-center border-2 border-dashed border-border">
-                    {orderDetails.payment_details.address}
+                    {orderDetails.payment_details.address || ''}
                   </div>
                 </div>
                 
@@ -567,7 +584,7 @@ export function RobuxCalculator() {
                     {t.orderCreated.exactAmount}
                   </p>
                   <p className="text-2xl sm:text-3xl font-bold text-yellow-800 dark:text-yellow-200">
-                    {orderDetails.payment_details.amount} {orderDetails.payment_details.currency.toUpperCase()}
+                    {orderDetails.payment_details.amount} {orderDetails.payment_details.currency?.toUpperCase()}
                   </p>
                 </div>
 
