@@ -105,9 +105,10 @@ export async function createPayment(orderData: {
 
   try {
      // 1. Check Minimum Amount first to avoid API errors
-     const minAmountData = await getMinAmount('usd', orderData.selectedCrypto);
+     // User pays IN crypto (currency_from) and we price IN usd (currency_to)
+     const minAmountData = await getMinAmount(orderData.selectedCrypto, 'usd');
      if (minAmountData.fiat_equivalent && orderData.usdAmount < minAmountData.fiat_equivalent) {
-        throw new Error(`The minimum payment amount is $${minAmountData.fiat_equivalent} USD. Please increase your Robux amount.`);
+        throw new Error(`The minimum payment amount for ${orderData.selectedCrypto.toUpperCase()} is $${minAmountData.fiat_equivalent} USD. Please increase your Robux amount.`);
      }
 
     const response = await fetch('https://api.nowpayments.io/v1/payment', {
