@@ -59,10 +59,11 @@ export function RobuxCalculator() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [addressCopied, setAddressCopied] = useState(false);
 
-  // Price: $6.50 per 1000 Robux (what user receives)
+  // Price: $4.50 per 1000 Robux (gross amount that the store buys)
   useEffect(() => {
     if (robuxAmount < 100) return;
-    const price = (robuxAmount / 1000) * 6.5;
+    const amountToBuy = Math.ceil(robuxAmount / 0.7);
+    const price = (amountToBuy / 1000) * 4.5;
     setUsdPrice(Number(price.toFixed(2)));
   }, [robuxAmount]);
 
@@ -321,6 +322,9 @@ export function RobuxCalculator() {
               <div className="border-t border-border pt-2 flex justify-between font-bold text-indigo-600 dark:text-indigo-400">
                 <span>{t.calculator.totalToBuy}</span>
                 <span>{Math.ceil(robuxAmount / 0.7).toLocaleString()} R$</span>
+              </div>
+              <div className="text-xs text-amber-600 dark:text-amber-500 mt-3 font-medium bg-amber-50 dark:bg-amber-950/30 p-2 rounded border border-amber-200 dark:border-amber-800">
+                {t.calculator.robloxTaxDesc || "⚠️ Nota: NO cubrimos el tax de Roblox (30%). Si deseas recibir esa cantidad, debes pagar el total con tax."}
               </div>
             </div>
 

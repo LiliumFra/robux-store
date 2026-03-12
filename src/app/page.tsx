@@ -37,7 +37,7 @@ export default function Home() {
                 </p>
                 <div className="mt-6 sm:mt-8 flex items-center gap-x-4 sm:gap-x-6">
                    <div className="text-xl sm:text-2xl font-bold text-foreground">
-                     $6.50 USD <span className="text-xs sm:text-sm font-normal text-muted-foreground">= {t.hero.price}</span>
+                     $4.50 USD <span className="text-xs sm:text-sm font-normal text-muted-foreground">= {t.hero.price}</span>
                    </div>
                 </div>
               </motion.div>

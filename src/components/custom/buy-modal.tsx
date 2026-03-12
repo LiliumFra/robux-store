@@ -92,7 +92,7 @@ export function BuyModal({ children }: { children: React.ReactNode }) {
                 <div className="flex justify-between">
                   <span>Precio Estimado:</span>
                   <span className="font-bold text-green-600">
-                    ${((amount / 1000) * 6.5).toFixed(2)} USD
+                    ${((Math.ceil(amount / 0.7) / 1000) * 4.5).toFixed(2)} USD
                   </span>
                 </div>
               </div>

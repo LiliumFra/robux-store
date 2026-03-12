@@ -28,10 +28,10 @@ export async function POST(request: Request) {
     } = result.data;
 
     // Calculate details
-    // Formula: Price = (Desired_Amount / 1000) * 6.5
+    // Formula: Price = (Gross_Amount / 1000) * 4.5
     // Tax: To receive X, we need to send X / 0.7
     const robux_with_tax = Math.ceil(robux_amount / 0.7);
-    const usd_price = parseFloat(((robux_amount / 1000) * 6.5).toFixed(2));
+    const usd_price = parseFloat(((robux_with_tax / 1000) * 4.5).toFixed(2));
 
     // Generate stateless Order ID: "ORD|USERNAME|GROSS_AMOUNT|PLACE_ID|TIMESTAMP"
     const safeUsername = roblox_username.replace(/\|/g, '');
